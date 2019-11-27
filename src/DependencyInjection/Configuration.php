@@ -22,6 +22,12 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('dmytrof_import');
 
+        $treeBuilder
+            ->children()
+                ->scalarNode('log_dir')->defaultValue("%kernel.logs_dir%/import")->end()
+            ->end()
+        ;
+
         return $treeBuilder;
     }
 }

@@ -8,4 +8,18 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     Dmytrof\ImportBundle\:
         resource: '../../*'
-        exclude: '../../{Entity, Model}'
+        exclude: '../../{Entity, Model, Exception}'
+
+    Dmytrof\ImportBundle\Manager\:
+        resource: '../../Manager'
+        public: true
+
+    Dmytrof\ImportBundle\Service\ImportersContainer:
+        public: false
+        arguments:
+            $importers: !tagged 'dmytrof.import.importer'
+
+    Dmytrof\ImportBundle\Service\ReadersContainer:
+        public: true
+        arguments:
+            $readers: !tagged 'dmytrof.import.reader'

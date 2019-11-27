@@ -1,0 +1,54 @@
+<?php
+
+/*
+ * This file is part of the DmytrofImportBundle package.
+ *
+ * (c) Dmytro Feshchenko <dmytro.feshchenko@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Dmytrof\ImportBundle\Importer\Options;
+
+use Dmytrof\ImportBundle\Model\{ImportableFields, ImportableFieldsOptions};
+
+interface ImporterOptionsInterface extends \SplSubject
+{
+    /**
+     * Returns path delimiter
+     * @return string
+     */
+    public static function getPathDelimiter(): string;
+
+    /**
+     * Returns id fields delimiter
+     * @return string
+     */
+    public static function getIdFieldsDelimiter(): string;
+
+    /**
+     * Returns data path
+     * @return null|string
+     */
+    public function getDataPath(): ?string;
+
+    /**
+     * Returns item hash id fields
+     * @return array|null
+     */
+    public function getItemHashIdFields(): ?array;
+
+    /**
+     * Returns importable fields options
+     * @return ImportableFieldsOptions|null
+     */
+    public function getImportableFieldsOptions(): ImportableFieldsOptions;
+
+    /**
+     * Prepares importable fields options
+     * @param ImportableFields $importableFields
+     * @return ImporterOptions
+     */
+    public function prepareImportableFieldsOptions(ImportableFields $importableFields): self;
+}

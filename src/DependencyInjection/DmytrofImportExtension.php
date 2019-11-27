@@ -12,6 +12,7 @@
 namespace Dmytrof\ImportBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader};
+use Dmytrof\ImportBundle\{Importer\ImporterInterface, Reader\ReaderInterface};
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
@@ -26,6 +27,16 @@ class DmytrofImportExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
+
+        foreach ($config as $key => $value) {
+            $container->setParameter($this->getAlias().'.'.$key, $value);
+        }
+
+        $container->registerForAutoconfiguration(ImporterInterface::class)
+            ->addTag('dmytrof.import.importer');
+
+        $container->registerForAutoconfiguration(ReaderInterface::class)
+            ->addTag('dmytrof.import.reader');
     }
 }
