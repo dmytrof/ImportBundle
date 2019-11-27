@@ -1,0 +1,33 @@
+{
+    "name": "dmytrof/import-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony Bundle to import data",
+    "keywords": ["Import"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dmytro Feshchenko",
+            "email": "dmytro.feshchenko@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "dmytrof/models-management-bundle": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dmytrof\\ImportBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dmytrof\\ImportBundle\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
