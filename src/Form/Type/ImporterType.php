@@ -11,12 +11,11 @@
 
 namespace Dmytrof\ImportBundle\Form\Type;
 
-use Symfony\Component\{
-	Form\AbstractType,
-	Form\FormBuilderInterface,
-	OptionsResolver\OptionsResolver
-};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Dmytrof\ImportBundle\Service\ImportersContainer;
+use Dmytrof\ImportBundle\Form\DataTransformer\ValueToStringTransformer;
 
 class ImporterType extends AbstractType
 {
@@ -40,10 +39,9 @@ class ImporterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choices' => $this->importersContainer->getImportersTitles(),
+            'choices' => array_flip($this->importersContainer->getImportersTitles()),
             'label' => 'label.importer_task.importer',
             'multiple' => false,
-//            'placeholder' => false,
         ]);
     }
 
@@ -52,7 +50,7 @@ class ImporterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new ChoiceToStringTransformer($options));
+        $builder->addModelTransformer(new ValueToStringTransformer($options));
     }
 
     /**

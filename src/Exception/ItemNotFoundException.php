@@ -14,7 +14,7 @@ namespace Dmytrof\ImportBundle\Exception;
 use Dmytrof\ModelsManagementBundle\Exception\NotFoundException;
 use Dmytrof\ImportBundle\Exception;
 
-class ItemNotFoundException extends NotFoundException implements Exception, NotFoundInterface
+class ItemNotFoundException extends NotFoundException implements Exception
 {
     /**
      * ItemNotFoundException constructor.

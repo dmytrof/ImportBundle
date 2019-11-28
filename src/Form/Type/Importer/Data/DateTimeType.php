@@ -12,10 +12,14 @@
 namespace Dmytrof\ImportBundle\Form\Type\Importer\Data;
 
 use Dmytrof\ImportBundle\Form\DataTransformer\ValueToDateTimeTransformer;
-use Symfony\Component\Form\{AbstractType, Extension\Core\Type\TextType, FormBuilderInterface};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class DateTimeType extends AbstractType
 {
+    /**
+     * @inheritDoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->resetViewTransformers();
@@ -23,7 +27,7 @@ class DateTimeType extends AbstractType
     }
 
     /**
-     * @return null|string
+     * @inheritDoc
      */
     public function getParent()
     {

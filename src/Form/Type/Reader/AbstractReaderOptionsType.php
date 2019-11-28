@@ -23,8 +23,6 @@ class AbstractReaderOptionsType extends AbstractType
 	{
 		$resolver->setDefaults([
 			'csrf_protection' => false,
-            'api_choices' => false,
 		]);
 	}
-
 }

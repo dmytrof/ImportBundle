@@ -11,10 +11,9 @@
 
 namespace Dmytrof\ImportBundle\Form\Type;
 
-use Symfony\Component\{Form\AbstractType,
-    Form\FormBuilderInterface,
-    OptionsResolver\OptionsResolver};
-use Dmytrof\ImportBundle\{Model\ImporterDefinition, Service\ImportersContainer};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Dmytrof\ImportBundle\{Importer\ImporterInterface, Model\ImporterDefinition, Service\ImportersContainer};
 
 class ImporterDefinitionType extends AbstractType
 {
@@ -48,7 +47,6 @@ class ImporterDefinitionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => ImporterDefinition::class,
             'label' => 'label.import_task.importer_definition',
-            'api_choices' => false,
         ]);
     }
 
@@ -60,15 +58,13 @@ class ImporterDefinitionType extends AbstractType
         $builder
             ->add('code', ImporterType::class, [
                 'label' => 'label.import_task.importer',
-                'api_choices' => $options['api_choices'],
             ])
         ;
-
+        /** @var ImporterInterface $importer */
         foreach ($this->getImportersContainer() as $importer) {
             if ($importer->hasOptions()) {
                 $builder->add($importer->getCode(), $importer->getOptionsFormClass(), [
                     'label'       => 'label.import_task.importer_options.label',
-                    'api_choices' => $options['api_choices'],
                     'path_delimiter' => call_user_func([$importer->getOptionsClass(), 'getPathDelimiter']),
                     'id_fields_delimiter' => call_user_func([$importer->getOptionsClass(), 'getIdFieldsDelimiter']),
                     'importable_fields' => $importer->getImportableFields(),

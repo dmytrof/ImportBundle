@@ -11,12 +11,10 @@
 
 namespace Dmytrof\ImportBundle\Form\Type\Reader;
 
-use Symfony\Component\{Form\AbstractType,
-    Form\Extension\Core\Type\CheckboxType,
-    Form\Extension\Core\Type\TextType,
-    Form\FormBuilderInterface,
-    OptionsResolver\OptionsResolver};
-use Dmytrof\ImportBundle\{Reader\Options\CsvReaderOptions};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\{CheckboxType, TextType};
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Dmytrof\ImportBundle\Reader\Options\CsvReaderOptions;
 
 class CsvReaderOptionsType extends AbstractType
 {
@@ -28,7 +26,6 @@ class CsvReaderOptionsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => CsvReaderOptions::class,
             'label' => false,
-            'api_choices' => false,
         ]);
     }
 

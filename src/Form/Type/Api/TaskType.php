@@ -12,15 +12,10 @@
 namespace Dmytrof\ImportBundle\Form\Type\Api;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\{AbstractType,
-    Extension\Core\Type\IntegerType,
-    Extension\Core\Type\TextareaType,
-    FormBuilderInterface,
-    Extension\Core\Type\TextType};
-
-use Dmytrof\ImportBundle\{Form\Type\ImporterDefinitionType,
-    Form\Type\ReaderDefinitionType,
-    Manager\TaskManager as Manager};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\{IntegerType, TextareaType, TextType};
+use Dmytrof\ImportBundle\Form\Type\{ImporterDefinitionType, ReaderDefinitionType};
+use Dmytrof\ImportBundle\Manager\TaskManager as Manager;
 
 class TaskType extends AbstractType
 {

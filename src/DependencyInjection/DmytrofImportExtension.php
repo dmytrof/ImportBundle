@@ -12,9 +12,9 @@
 namespace Dmytrof\ImportBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Loader};
-use Dmytrof\ImportBundle\{Importer\ImporterInterface, Reader\ReaderInterface};
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Dmytrof\ImportBundle\{Importer\ImporterInterface, Reader\ReaderInterface};
 
 class DmytrofImportExtension extends Extension
 {

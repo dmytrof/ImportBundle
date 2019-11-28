@@ -11,13 +11,9 @@
 
 namespace Dmytrof\ImportBundle\Form\Type;
 
-use Symfony\Component\{Form\AbstractType,
-    Form\FormBuilderInterface,
-    Form\FormInterface,
-    Form\FormView,
-    OptionsResolver\OptionsResolver,
-    Routing\RouterInterface};
-use Dmytrof\ImportBundle\{Model\ReaderDefinition, Service\ReadersContainer};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface, FormInterface, FormView};
+use Symfony\Component\{OptionsResolver\OptionsResolver, Routing\RouterInterface};
+use Dmytrof\ImportBundle\{Model\ReaderDefinition, Reader\ReaderInterface, Service\ReadersContainer};
 
 class ReaderDefinitionType extends AbstractType
 {
@@ -66,7 +62,6 @@ class ReaderDefinitionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => ReaderDefinition::class,
             'label' => 'label.import_task.reader_definition',
-            'api_choices' => false,
         ]);
     }
 
@@ -82,21 +77,27 @@ class ReaderDefinitionType extends AbstractType
             ])
         ;
 
+        /** @var ReaderInterface $reader */
         foreach ($this->getReadersContainer() as $reader) {
             if ($reader->hasOptions()) {
                 $builder->add($reader->getCode(), $reader->getOptionsFormClass(), [
                     'label' => 'label.import_task.reader_options.label',
-                    'api_choices' => $options['api_choices'],
                 ]);
             }
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['parseLinkUri'] = $this->getRouter()->generate('api_import_data_v1_post_parse_link');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getBlockPrefix()
     {
         return 'dmytrof_import_task_reader_definition';

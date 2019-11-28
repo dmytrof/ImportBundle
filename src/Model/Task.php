@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
-use Dmytrof\ImportBundle\Event\TaskEvent;
+use Dmytrof\ImportBundle\Event\PreImportTaskEvent;
 use Dmytrof\ImportBundle\Exception\{
     ImporterException, ReaderException
 };
@@ -766,7 +766,7 @@ class Task extends BaseModel implements \SplObserver
                 ->setImportedAt(new \DateTime())
             ;
             $manager->save($this);
-            $this->getEventDispatcher()->dispatch(TaskEvent::PRE_IMPORT_DATA, new TaskEvent($this));
+            $this->getEventDispatcher()->dispatch(PreImportTaskEvent::PRE_IMPORT_DATA, new PreImportTaskEvent($this));
 
             $importer = $this->getImporter();
             $importer
@@ -783,7 +783,7 @@ class Task extends BaseModel implements \SplObserver
                 ->setImportStatistics($importer->getImportStatistics())
             ;
             $manager->save($task);
-            $this->getEventDispatcher()->dispatch(TaskEvent::POST_IMPORT_DATA, new TaskEvent($task));
+            $this->getEventDispatcher()->dispatch(PreImportTaskEvent::POST_IMPORT_DATA, new PreImportTaskEvent($task));
             return $task;
         } catch (ReaderException|ImporterException $e) {
             if ($io || $logger) {

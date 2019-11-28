@@ -11,15 +11,15 @@
 
 namespace Dmytrof\ImportBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ImportBundle\{
     Exception\TaskNotFoundException as NotFoundException,
     Form\Type\Api\TaskType as CreateType,
     Model\Task,
     Entity\Task\Task as Entity
 };
-use Dmytrof\ImportBundle\Service\LoggerManager;
-use Monolog\Logger;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Dmytrof\ImportBundle\Service\Logger;
 use Symfony\Component\Console\{
     Input\InputInterface, Output\OutputInterface, Style\SymfonyStyle
 };
@@ -27,7 +27,7 @@ use Symfony\Component\{
     Form\FormFactoryInterface, Validator\Validator\ValidatorInterface
 };
 
-class TaskManager extends ManagerWithApiCRUDSupport
+class TaskManager extends AbstractDoctrineManager
 {
     const MODEL_CLASS = Entity::class;
     const EXCEPTION_CLASS_NOT_FOUND = NotFoundException::class;
@@ -40,14 +40,14 @@ class TaskManager extends ManagerWithApiCRUDSupport
 
     /**
      * TaskManager constructor.
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param ValidatorInterface $validator
      * @param FormFactoryInterface $formFactory
-     * @param LoggerManager $loggerManager
+     * @param Logger $logger
      */
-    public function __construct(RegistryInterface $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory, LoggerManager $loggerManager)
+    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory, Logger $logger)
     {
-        $this->logger = $loggerManager->get('import');
+        $this->logger = $logger;
         parent::__construct($registry, $validator, $formFactory);
     }
 

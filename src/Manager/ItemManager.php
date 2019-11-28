@@ -11,15 +11,13 @@
 
 namespace Dmytrof\ImportBundle\Manager;
 
-use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineanager;
-
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ImportBundle\{Exception\ItemNotFoundException as NotFoundException,
     Model\Item,
     Entity\Item\Item as Entity,
     Model\Task};
-use Dmytrof\ImportBundle\Service\LoggerManager;
-use Monolog\Logger;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Dmytrof\ImportBundle\Service\Logger;
 use Symfony\Component\Console\{
     Input\InputInterface, Output\OutputInterface, Style\SymfonyStyle
 };
@@ -38,15 +36,15 @@ class ItemManager extends AbstractDoctrineManager
     protected $logger;
 
     /**
-     * TaskManager constructor.
-     * @param RegistryInterface $registry
+     * ItemManager constructor.
+     * @param ManagerRegistry $registry
      * @param ValidatorInterface $validator
      * @param FormFactoryInterface $formFactory
-     * @param LoggerManager $loggerManager
+     * @param Logger $logger
      */
-    public function __construct(RegistryInterface $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory, LoggerManager $loggerManager)
+    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory, Logger $logger)
     {
-        $this->logger = $loggerManager->get('import');
+        $this->logger = $logger;
         parent::__construct($registry, $validator, $formFactory);
     }
 

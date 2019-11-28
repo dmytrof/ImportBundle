@@ -14,7 +14,7 @@ namespace Dmytrof\ImportBundle\Exception;
 use Dmytrof\ModelsManagementBundle\Exception\NotFoundException;
 use Dmytrof\ImportBundle\Exception;
 
-class TaskNotFoundException extends NotFoundException implements Exception, NotFoundInterface
+class TaskNotFoundException extends NotFoundException implements Exception
 {
     /**
      * TaskNotFoundException constructor.

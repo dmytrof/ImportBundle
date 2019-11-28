@@ -11,40 +11,19 @@
 
 namespace Dmytrof\ImportBundle\Importer;
 
-use Dmytrof\ModelsManagementBundle\Exception\FormErrorsException;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Symfony\Component\{Console\Input\ArrayInput,
-    Console\Output\NullOutput,
-    Console\Output\OutputInterface,
-    Console\Style\SymfonyStyle,
-    Form\Form,
-    Form\FormBuilder,
-    Form\FormBuilderInterface,
-    Form\FormError,
-    Form\FormInterface,
-    HttpFoundation\Request,
-    OptionsResolver\OptionsResolver,
-    Translation\TranslatorInterface};
-use Dmytrof\ModelsManagementBundle\{Exception\InvalidTargetException,
-    Manager\AbstractManager,
-    Model\SimpleModelInterface};
-use Dmytrof\ImportBundle\{
-    Exception\ImporterException, Manager\ItemManager, Form\Type\Importer\ImporterOptionsType
-};
-use Dmytrof\ImportBundle\Importer\Options\{
-    ImporterOptions, ImporterOptionsInterface
-};
-use Dmytrof\ImportBundle\Model\{ImportableField,
-    ImportableFieldOptions,
-    ImportableFields,
-    ImportableFieldsOptions,
-    ImportedData,
-    ImportFormData,
-    ImportStatistics,
-    Item,
-    Task};
+use Psr\Log\{LoggerInterface, NullLogger};
+use Symfony\Component\Console\{Input\ArrayInput, Style\SymfonyStyle};
+use Symfony\Component\Console\Output\{NullOutput, OutputInterface};
+use Symfony\Component\Form\{Form, FormInterface};
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Dmytrof\ModelsManagementBundle\Exception\{FormErrorsException, InvalidTargetException};
+use Dmytrof\ModelsManagementBundle\{Manager\AbstractManager, Model\SimpleModelInterface};
+use Dmytrof\ImportBundle\{Exception\ImporterException, Manager\ItemManager, Form\Type\Importer\ImporterOptionsType};
+use Dmytrof\ImportBundle\Importer\Options\{ImporterOptions, ImporterOptionsInterface};
+use Dmytrof\ImportBundle\Model\{ImportableField, ImportableFields, ImportableFieldsOptions, ImportedData, ImportFormData, ImportStatistics, Item, Task};
 
 abstract class AbstractImporter implements ImporterInterface
 {
@@ -66,7 +45,7 @@ abstract class AbstractImporter implements ImporterInterface
     protected $task;
 
     /**
-     * @var AbstractDoctrinePaginationManager
+     * @var AbstractManager
      */
     protected $manager;
 
@@ -536,7 +515,7 @@ abstract class AbstractImporter implements ImporterInterface
             $progressBar->advance();
             if (empty($row)) {
                 $this->getImportStatistics()->incrementSkipped();
-                $this->logImportItemResult('info', 'SKIPPED', null, (array)$row, ['No data in row']);
+                $this->logImportItemResult('info', 'SKIPPED', null, (array) $row, ['No data in row']);
                 continue;
             }
             $item = $data->prepareRow($row);

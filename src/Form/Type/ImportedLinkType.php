@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Form\Type;
 
-use Symfony\Component\{Form\AbstractType, Form\Extension\Core\Type\TextType, OptionsResolver\OptionsResolver};
+use Symfony\Component\{Form\AbstractType, OptionsResolver\OptionsResolver};
 
 class ImportedLinkType extends AbstractType
 {

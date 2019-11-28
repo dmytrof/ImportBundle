@@ -11,11 +11,10 @@
 
 namespace Dmytrof\ImportBundle\Form\Type;
 
-use Symfony\Component\{
-	Form\AbstractType,
-	Form\FormBuilderInterface,
-	OptionsResolver\OptionsResolver
-};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Dmytrof\ImportBundle\Form\DataTransformer\ValueToStringTransformer;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Dmytrof\ImportBundle\Service\ReadersContainer;
 
 class ReaderType extends AbstractType
@@ -40,10 +39,9 @@ class ReaderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choices' => $this->readersContainer->getReadersTitles(),
+            'choices' => array_flip($this->readersContainer->getReadersTitles()),
             'label' => 'label.reader_task.reader',
             'multiple' => false,
-//            'placeholder' => false,
         ]);
     }
 
@@ -52,7 +50,7 @@ class ReaderType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new ChoiceToStringTransformer($options));
+        $builder->addModelTransformer(new ValueToStringTransformer($options));
     }
 
     /**
@@ -60,6 +58,6 @@ class ReaderType extends AbstractType
      */
     public function getParent()
     {
-        return SelectType::class;
+        return ChoiceType::class;
     }
 }

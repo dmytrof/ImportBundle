@@ -11,16 +11,10 @@
 
 namespace Dmytrof\ImportBundle\Form\Type\Importer;
 
-use Symfony\Component\Form\{AbstractType,
-    CallbackTransformer,
-    FormBuilderInterface,
-    FormEvent,
-    FormEvents,
-    FormInterface,
-    FormView};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Dmytrof\ImportBundle\Importer\Options\ImporterOptions;
-use Dmytrof\ImportBundle\Model\{ImportableField, ImportableFieldOptions, ImportableFields, ImportableFieldsOptions};
+use Dmytrof\ImportBundle\Model\{ImportableField, ImportableFields, ImportableFieldsOptions};
 
 class ImportableFieldsOptionsType extends AbstractType
 {

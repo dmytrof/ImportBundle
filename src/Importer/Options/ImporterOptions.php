@@ -11,9 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Importer\Options;
 
-use Dmytrof\ImportBundle\Model\{
-    ImportableFieldOptions, ImportableFields, ImportableFieldsOptions
-};
+use Dmytrof\ImportBundle\Model\{ImportableFieldOptions, ImportableFields, ImportableFieldsOptions};
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ImporterOptions implements ImporterOptionsInterface, \SplObserver

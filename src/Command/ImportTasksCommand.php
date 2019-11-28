@@ -11,18 +11,30 @@
 
 namespace Dmytrof\ImportBundle\Command;
 
-use Monolog\Logger;
-use Symfony\Bridge\Monolog\Handler\ConsoleHandler;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Command\LockableTrait;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\{InputArgument, InputInterface, InputOption};
+use Symfony\Component\Console\Command\{Command, LockableTrait};
+use Symfony\Component\Console\{Style\SymfonyStyle, Output\OutputInterface};
+use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Dmytrof\ImportBundle\Manager\TaskManager;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportTasksCommand extends ContainerAwareCommand
+class ImportTasksCommand extends Command
 {
     use LockableTrait;
+
+    /**
+     * @var TaskManager
+     */
+    private $taskManager;
+
+    /**
+     * ImportTasksCommand constructor.
+     * @param TaskManager $taskManager
+     * @param string|null $name
+     */
+    public function __construct(TaskManager $taskManager, string $name = null)
+    {
+        parent::__construct($name);
+        $this->taskManager = $taskManager;
+    }
 
     /**
 	 * ImportCommand configuration.
@@ -45,7 +57,7 @@ class ImportTasksCommand extends ContainerAwareCommand
      */
 	protected function getTaskManager(): TaskManager
     {
-        return $this->getContainer()->get(TaskManager::class);
+        return $this->taskManager;
     }
 
 	/**

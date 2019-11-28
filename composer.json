@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^7.2",
+        "monolog/monolog": "^2.0",
         "dmytrof/models-management-bundle": "^1.0"
     },
     "require-dev": {

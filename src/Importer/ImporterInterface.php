@@ -11,12 +11,11 @@
 
 namespace Dmytrof\ImportBundle\Importer;
 
-use Dmytrof\ImportBundle\{
-    Importer\Options\ImporterOptionsInterface, Manager\ItemManager
-};
-use Dmytrof\ImportBundle\Model\{ImportableFields, ImportedData, ImportFormData, ImportStatistics, Item, Task};
 use Psr\Log\LoggerInterface;
-use Symfony\Component\{Console\Output\OutputInterface, Console\Style\SymfonyStyle, Translation\TranslatorInterface};
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Console\{Output\OutputInterface, Style\SymfonyStyle};
+use Dmytrof\ImportBundle\{Importer\Options\ImporterOptionsInterface, Manager\ItemManager};
+use Dmytrof\ImportBundle\Model\{ImportableFields, ImportedData, ImportFormData, ImportStatistics, Item, Task};
 
 interface ImporterInterface
 {

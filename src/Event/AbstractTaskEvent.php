@@ -12,20 +12,17 @@
 namespace Dmytrof\ImportBundle\Event;
 
 use Dmytrof\ImportBundle\Model\Task;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class TaskEvent extends Event
+abstract class AbstractTaskEvent extends Event
 {
-    public const PRE_IMPORT_DATA    = 'dmytrof.import.task.pre_import_data';
-    public const POST_IMPORT_DATA   = 'dmytrof.import.task.post_import_data';
-
     /**
      * @var Task
      */
     protected $task;
 
     /**
-     * TaskEvent constructor.
+     * AbstractTaskEvent constructor.
      * @param Task $task
      */
     public function __construct(Task $task)

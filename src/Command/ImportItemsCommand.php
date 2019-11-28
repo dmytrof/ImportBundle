@@ -11,18 +11,30 @@
 
 namespace Dmytrof\ImportBundle\Command;
 
-use Monolog\Logger;
-use Symfony\Bridge\Monolog\Handler\ConsoleHandler;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Command\LockableTrait;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\{InputArgument, InputInterface, InputOption};
+use Symfony\Component\Console\Command\{Command, LockableTrait};
+use Symfony\Component\Console\{Style\SymfonyStyle, Output\OutputInterface};
+use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Dmytrof\ImportBundle\Manager\ItemManager;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportItemsCommand extends ContainerAwareCommand
+class ImportItemsCommand extends Command
 {
     use LockableTrait;
+
+    /**
+     * @var ItemManager
+     */
+    private $itemManager;
+
+    /**
+     * ImportItemsCommand constructor.
+     * @param ItemManager $itemManager
+     * @param string|null $name
+     */
+    public function __construct(ItemManager $itemManager, string $name = null)
+    {
+        parent::__construct($name);
+        $this->itemManager = $itemManager;
+    }
 
     /**
 	 * ImportCommand configuration.
@@ -48,7 +60,7 @@ class ImportItemsCommand extends ContainerAwareCommand
      */
 	protected function getItemManager(): ItemManager
     {
-        return $this->getContainer()->get(ItemManager::class);
+        return $this-$this->itemManager;
     }
 
 	/**

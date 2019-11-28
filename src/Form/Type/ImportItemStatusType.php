@@ -11,11 +11,11 @@
 
 namespace Dmytrof\ImportBundle\Form\Type;
 
-use Dmytrof\ImportBundle\Model\Item;
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\{
-    AbstractType, FormBuilderInterface
-};
+use Dmytrof\ImportBundle\Model\Item;
+use Dmytrof\ImportBundle\Form\DataTransformer\ValueToIntegerTransformer;
 
 class ImportItemStatusType extends AbstractType
 {
@@ -37,7 +37,7 @@ class ImportItemStatusType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new ChoiceToIntegerTransformer($options));
+        $builder->addModelTransformer(new ValueToIntegerTransformer($options));
     }
 
     /**
