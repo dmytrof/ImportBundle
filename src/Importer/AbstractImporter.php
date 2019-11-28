@@ -310,7 +310,7 @@ abstract class AbstractImporter implements ImporterInterface
     public function getImportableFields(): ImportableFields
     {
         $fields = new ImportableFields();
-        $form = $this->getManager()->getFormFactory()->create($this->getImporterFormClass() ?: $this->getManager()->getCreateItemFormType());
+        $form = $this->getManager()->getFormFactory()->create($this->getImporterFormClass() ?: $this->getManager()->getCreateModelFormType());
         $this->addImportableFields($fields, $form);
         return $fields;
     }
