@@ -11,27 +11,22 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
-use Dmytrof\ModelsManagementBundle\Model\{AbstractModel,
-    Target,
-    TargetedModelInterface,
-    Traits\TargetedModel,
-    Traits\TimestampableModel,
-    Traits\TranslatorTrait};
-
+use Monolog\Logger;
+use Dmytrof\ModelsManagementBundle\Model\{ActiveModelInterface, Traits\ActiveModelTrait};
+use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleModelTrait};
+use Dmytrof\ModelsManagementBundle\Model\{TargetedModelInterface, Traits\TargetedModelTrait};
 use Dmytrof\ImportBundle\Exception\{ImporterException, ItemException};
 use Dmytrof\ImportBundle\Manager\{ItemManager, TaskManager};
-use Monolog\Logger;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Item extends AbstractModel implements TargetedModelInterface
+class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelInterface
 {
-    use TimestampableModel,
-        TargetedModel,
-        TranslatorTrait;
+    use TargetedModelTrait,
+        SimpleModelTrait,
+        ActiveModelTrait {
+        SimpleModelTrait::isNew as private _isNew;
+    }
 
     public const STATUS_SKIPPED     = 1;
     public const STATUS_CREATED     = 2;
@@ -120,20 +115,6 @@ class Item extends AbstractModel implements TargetedModelInterface
     protected $errors;
 
     /**
-     * {@inheritdoc}
-     */
-    protected function init()
-    {
-        parent::init();
-    }
-
-    public function __clone()
-    {
-        parent::__clone();
-        $this->_cloneTimestampable();
-    }
-
-    /**
      * Returns array of statuses
      * @return array
      */
@@ -148,7 +129,7 @@ class Item extends AbstractModel implements TargetedModelInterface
      */
     public static function getStatusesTitles()
     {
-        return static::transList(static::STATUSES);
+        return static::STATUSES;
     }
 
     /**
@@ -427,7 +408,7 @@ class Item extends AbstractModel implements TargetedModelInterface
      */
     public function isNew(): bool
     {
-        return parent::isNew() || !$this->getDataHash();
+        return $this->_isNew() || !$this->getDataHash();
     }
 
     /**

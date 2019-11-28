@@ -20,6 +20,12 @@ services:
             $importers: !tagged 'dmytrof.import.importer'
 
     Dmytrof\ImportBundle\Service\ReadersContainer:
-        public: true
+        public: false
         arguments:
             $readers: !tagged 'dmytrof.import.reader'
+
+    Dmytrof\ImportBundle\Service\Logger:
+        arguments:
+            $name: import
+            $logsDir: "%kernel.logs_dir%"
+            $env: "%kernel.environment%"

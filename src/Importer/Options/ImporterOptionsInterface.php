@@ -48,7 +48,7 @@ interface ImporterOptionsInterface extends \SplSubject
     /**
      * Prepares importable fields options
      * @param ImportableFields $importableFields
-     * @return ImporterOptions
+     * @return ImporterOptionsInterface
      */
     public function prepareImportableFieldsOptions(ImportableFields $importableFields): self;
 }

@@ -13,7 +13,12 @@
     "require": {
         "php": "^7.2",
         "monolog/monolog": "^2.0",
-        "dmytrof/models-management-bundle": "^1.0"
+        "symfony/http-client": "^4.3|^5.0",
+        "symfony/serializer": "^4.3|^5.0",
+        "dmytrof/models-management-bundle": "^1.0",
+        "guzzlehttp/guzzle": "^6.4",
+        "zendframework/zend-feed": "^2.12",
+        "zendframework/zend-xml2json": "^3.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.3"

@@ -16,14 +16,8 @@ use Dmytrof\ImportBundle\Exception\{ImportableFieldsOptionsException, InvalidArg
 
 class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \SplSubject
 {
-
     /**
      * @var ImportableFieldOptions[]
-     *
-     * @JMS\Expose
-     * @JMS\Accessor(getter="getFieldsOptionsArr", setter="setFieldsOptionsArr")
-     * @JMS\Type(ImportableFieldsOptions::JMS_TYPE_ELEMENTS)
-     * @JMS\Groups({ViewGroups::GROUP_LIST, ViewGroups::GROUP_ITEM})
      */
     protected $elements;
 

@@ -12,10 +12,8 @@
 namespace Dmytrof\ImportBundle\Reader;
 
 use Doctrine\Common\Inflector\Inflector;
-use Dmytrof\ImportBundle\{
-    Exception\ReaderException, Model\ImportedData
-};
-use Zend\Feed\{Reader\Entry\EntryInterface, Reader\Reader};
+use Dmytrof\ImportBundle\Model\ImportedData;
+use Zend\Feed\Reader\{Reader, Entry\EntryInterface};
 
 class RssReader extends AbstractReader
 {
@@ -60,8 +58,8 @@ class RssReader extends AbstractReader
             'title'       => $entry->getTitle(),
             'content'     => $entry->getContent(),
             'description' => $entry->getDescription(),
-            'updatedAt'  => $entry->getDateModified() ? $this->convertIntoDateTimeObject($entry->getDateModified()) : null,
-            'createdAt'  => $entry->getDateCreated() ? $this->convertIntoDateTimeObject($entry->getDateCreated()) : null,
+            'updatedAt'   => $entry->getDateModified() ? $this->convertIntoDateTimeObject($entry->getDateModified()) : null,
+            'createdAt'   => $entry->getDateCreated() ? $this->convertIntoDateTimeObject($entry->getDateCreated()) : null,
             'authors'     => $entry->getAuthors() ? $entry->getAuthors()->getValues() : [],
             'categories'  => $entry->getCategories() ? $entry->getCategories()->getValues() : [],
             'links'       => $entry->getLinks(),

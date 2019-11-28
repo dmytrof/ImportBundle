@@ -11,9 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Reader;
 
-use Dmytrof\ImportBundle\{
-    Model\ImportedData
-};
+use Dmytrof\ImportBundle\Model\ImportedData;
 
 class JsonReader extends AbstractReader
 {

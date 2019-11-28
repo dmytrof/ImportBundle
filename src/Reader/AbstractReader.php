@@ -16,7 +16,9 @@ use Dmytrof\ImportBundle\Model\Task;
 use Dmytrof\ImportBundle\Reader\Options\ReaderOptionsInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use GuzzleHttp\{Client, Exception\ClientException};
+use Psr\Http\Message\ResponseInterface;
 use Zend\Json\Json;
 
 abstract class AbstractReader implements ReaderInterface

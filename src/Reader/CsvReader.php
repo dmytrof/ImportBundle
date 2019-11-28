@@ -11,16 +11,12 @@
 
 namespace Dmytrof\ImportBundle\Reader;
 
-use Symfony\Component\Filesystem\{
-    Exception\IOException, Filesystem
-};
-use Dmytrof\ImportBundle\{Exception\ReaderException,
-    Form\Type\Reader\CsvReaderOptionsType,
-    Model\ImportedData,
-    Model\ImportedDataFile,
-    Reader\Options\CsvReaderOptions,
-    Reader\Options\ReaderOptionsInterface};
+use Symfony\Component\Filesystem\{Exception\IOException, Filesystem};
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Dmytrof\ImportBundle\Reader\Options\{CsvReaderOptions, ReaderOptionsInterface};
+use Dmytrof\ImportBundle\Model\{ImportedData, ImportedDataFile};
+use Dmytrof\ImportBundle\Exception\ReaderException;
+use Dmytrof\ImportBundle\Form\Type\Reader\CsvReaderOptionsType;
 
 class CsvReader extends AbstractReader
 {
@@ -53,8 +49,6 @@ class CsvReader extends AbstractReader
         }
         return true;
     }
-
-
 
     /**
      * {@inheritdoc}

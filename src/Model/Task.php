@@ -11,32 +11,25 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
-use Dmytrof\ImportBundle\Event\PreImportTaskEvent;
-use Dmytrof\ImportBundle\Exception\{
-    ImporterException, ReaderException
-};
-use Dmytrof\ImportBundle\Importer\{
-    ImporterInterface, Options\ImporterOptionsInterface
-};
+use Monolog\Logger;
+use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleModelTrait};
+use Dmytrof\ModelsManagementBundle\Model\{ActiveModelInterface, Traits\ActiveModelTrait};
+use Dmytrof\ImportBundle\Event\{PreImportTaskEvent, PostImportTaskEvent};
+use Dmytrof\ImportBundle\Exception\{ImporterException, ReaderException};
+use Dmytrof\ImportBundle\Importer\{ImporterInterface, Options\ImporterOptionsInterface};
 use Dmytrof\ImportBundle\Manager\TaskManager;
 use Dmytrof\ImportBundle\Reader\{Options\ReaderOptionsInterface, ReaderInterface};
-use Dmytrof\ImportBundle\Service\{
-    ImportersContainer, ReadersContainer
-};
-
-use Monolog\Logger;
-use Symfony\Component\Console\{
-    Output\OutputInterface, Style\SymfonyStyle
-};
-use Symfony\Component\{
-    EventDispatcher\EventDispatcherInterface, Validator\Context\ExecutionContextInterface
-};
-
+use Dmytrof\ImportBundle\Service\{ImportersContainer, ReadersContainer};
+use Symfony\Component\Console\{Output\OutputInterface, Style\SymfonyStyle};
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Serializer\{Exception\ExceptionInterface, Normalizer\ObjectNormalizer};
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class Task extends BaseModel implements \SplObserver
+class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
 {
-    use TranslatorTrait;
+    use SimpleModelTrait,
+        ActiveModelTrait;
 
     public const VALIDATION_GROUP_LINK_AND_PARSER = 'LinkAndParser';
 
@@ -57,17 +50,17 @@ class Task extends BaseModel implements \SplObserver
     /**
      * @var ImportersContainer
      */
-    protected static $importersContainer;
+    protected $importersContainer;
 
     /**
      * @var ReadersContainer
      */
-    protected static $readersContainer;
+    protected $readersContainer;
 
     /**
      * @var EventDispatcherInterface
      */
-    protected static $eventDispatcher;
+    protected $eventDispatcher;
 
     /**
      * ID
@@ -187,17 +180,12 @@ class Task extends BaseModel implements \SplObserver
      */
     protected function init()
     {
-        parent::init();
-
         $this->setInProgress(false);
         $this->setActive(true);
     }
 
     public function __clone()
     {
-        parent::__clone();
-        $this->_cloneTimestampable();
-
         $this->setInProgress(false);
         $this->setActive(true);
     }
@@ -206,54 +194,60 @@ class Task extends BaseModel implements \SplObserver
      * Returns importers container
      * @return ImportersContainer|null
      */
-    public static function getImportersContainer(): ?ImportersContainer
+    public function getImportersContainer(): ?ImportersContainer
     {
-        return self::$importersContainer;
+        return $this->importersContainer;
     }
 
     /**
      * Sets importers container
      * @param ImportersContainer|null $importersContainer
+     * @return Task
      */
-    public static function setImportersContainer(?ImportersContainer $importersContainer): void
+    public function setImportersContainer(?ImportersContainer $importersContainer): self
     {
-        self::$importersContainer = $importersContainer;
+        $this->importersContainer = $importersContainer;
+        return $this;
     }
 
     /**
      * Returns readers container
      * @return ReadersContainer|null
      */
-    public static function getReadersContainer(): ?ReadersContainer
+    public function getReadersContainer(): ?ReadersContainer
     {
-        return self::$readersContainer;
+        return $this->readersContainer;
     }
 
     /**
      * Sets readers container
      * @param ReadersContainer|null $readersContainer
+     * @return Task
      */
-    public static function setReadersContainer(?ReadersContainer $readersContainer): void
+    public function setReadersContainer(?ReadersContainer $readersContainer): self
     {
-        self::$readersContainer = $readersContainer;
+        $this->readersContainer = $readersContainer;
+        return $this;
     }
 
     /**
      * Returns event dispatcher
      * @return null|EventDispatcherInterface
      */
-    public static function getEventDispatcher(): ?EventDispatcherInterface
+    public function getEventDispatcher(): ?EventDispatcherInterface
     {
-        return self::$eventDispatcher;
+        return $this->eventDispatcher;
     }
 
     /**
      * Sets event dispatcher
      * @param null|EventDispatcherInterface $eventDispatcher
+     * @return Task
      */
-    public static function setEventDispatcher(?EventDispatcherInterface $eventDispatcher): void
+    public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher): self
     {
-        self::$eventDispatcher = $eventDispatcher;
+        $this->eventDispatcher = $eventDispatcher;
+        return $this;
     }
 
     /**
@@ -271,10 +265,13 @@ class Task extends BaseModel implements \SplObserver
      */
     public static function getPeriodsTitles()
     {
-        return static::transList(static::PERIODS);
+        return static::PERIODS;
     }
 
-    public function getTitleOfModel()
+    /**
+     * @inheritDoc
+     */
+    public function getTitleOfModel(): string
     {
         return $this->getTitle().' (ID: '.$this->getId().')';
     }
@@ -407,8 +404,8 @@ class Task extends BaseModel implements \SplObserver
     {
         if (is_null($this->importStatistics)) {
             try {
-                $this->importStatistics = $this->getSerializer()->fromArray((array) $this->getImportStatisticsArr(), ImportStatistics::class);
-            } catch (RuntimeException $e) {
+                $this->importStatistics = (new ObjectNormalizer())->denormalize((array) $this->getImportStatisticsArr(), ImportStatistics::class);
+            } catch (ExceptionInterface $e) {
                 $this->importStatistics = new ImportStatistics();
             }
         }
@@ -423,7 +420,12 @@ class Task extends BaseModel implements \SplObserver
     protected function setImportStatistics(?ImportStatistics $importStatistics): self
     {
         $this->importStatistics = $importStatistics;
-        $this->setImportStatisticsArr($this->getSerializer()->toArray($this->importStatistics));
+        try {
+            $importStatisticsArr = (new ObjectNormalizer())->normalize($this->importStatistics);
+        } catch (ExceptionInterface $e) {
+            $importStatisticsArr = null;
+        }
+        $this->setImportStatisticsArr($importStatisticsArr);
         return $this;
     }
 
@@ -521,10 +523,10 @@ class Task extends BaseModel implements \SplObserver
         if (is_null($this->importerOptions) && $this->getImporter()->hasOptions()) {
             $optionsClass = $this->getImporter()->getOptionsClass();
             try {
-                $this->importerOptions = $this->getSerializer()->fromArray((array) $this->getImporterOptionsArr(), $optionsClass);
+                $this->importerOptions = (new ObjectNormalizer())->denormalize((array) $this->getImporterOptionsArr(), $optionsClass);
                 $this->importerOptions->prepareImportableFieldsOptions($this->getImporter()->getImportableFields());
-            } catch (RuntimeException $e) {
-                $this->importerOptions = new $optionsClass;
+            } catch (ExceptionInterface $e) {
+                $this->readerOptions = new $optionsClass;
             }
             $this->importerOptions->attach($this);
         }
@@ -539,7 +541,12 @@ class Task extends BaseModel implements \SplObserver
     protected function setImporterOptions(?ImporterOptionsInterface $importerOptions): self
     {
         $this->importerOptions = $importerOptions;
-        $this->setImporterOptionsArr($this->getImporter()->hasOptions() ? $this->getSerializer()->toArray($this->importerOptions) : null);
+        try {
+            $importerOptionsArr = $this->getReader() && $this->getReader()->hasOptions() ? (new ObjectNormalizer())->normalize($this->importerOptions) : null;
+        } catch (ExceptionInterface $e) {
+            $importerOptionsArr = null;
+        }
+        $this->setImporterOptionsArr($importerOptionsArr);
         return $this;
     }
 
@@ -686,8 +693,8 @@ class Task extends BaseModel implements \SplObserver
         if (is_null($this->readerOptions) && $this->getReader() && $this->getReader()->hasOptions()) {
             $optionsClass = $this->getReader()->getOptionsClass();
             try {
-                $this->readerOptions = $this->getSerializer()->fromArray((array) $this->getReaderOptionsArr(), $optionsClass);
-            } catch (RuntimeException $e) {
+                $this->readerOptions = (new ObjectNormalizer())->denormalize((array) $this->getReaderOptionsArr(), $optionsClass);
+            } catch (ExceptionInterface $e) {
                 $this->readerOptions = new $optionsClass;
             }
             $this->readerOptions->attach($this);
@@ -703,7 +710,13 @@ class Task extends BaseModel implements \SplObserver
     protected function setReaderOptions(?ReaderOptionsInterface $readerOptions): self
     {
         $this->readerOptions = $readerOptions;
-        $this->setReaderOptionsArr($this->getReader() && $this->getReader()->hasOptions() ? $this->getSerializer()->toArray($this->readerOptions) : null);
+        try {
+            $readerOptionsArr = $this->getReader() && $this->getReader()->hasOptions() ? (new ObjectNormalizer())->normalize($this->readerOptions) : null;
+        } catch (ExceptionInterface $e) {
+            $readerOptionsArr = null;
+        }
+        $this->setReaderOptionsArr($readerOptionsArr);
+
         return $this;
     }
 
@@ -766,7 +779,7 @@ class Task extends BaseModel implements \SplObserver
                 ->setImportedAt(new \DateTime())
             ;
             $manager->save($this);
-            $this->getEventDispatcher()->dispatch(PreImportTaskEvent::PRE_IMPORT_DATA, new PreImportTaskEvent($this));
+            $this->getEventDispatcher()->dispatch(new PreImportTaskEvent($this));
 
             $importer = $this->getImporter();
             $importer
@@ -783,7 +796,7 @@ class Task extends BaseModel implements \SplObserver
                 ->setImportStatistics($importer->getImportStatistics())
             ;
             $manager->save($task);
-            $this->getEventDispatcher()->dispatch(PreImportTaskEvent::POST_IMPORT_DATA, new PreImportTaskEvent($task));
+            $this->getEventDispatcher()->dispatch(new PostImportTaskEvent($task));
             return $task;
         } catch (ReaderException|ImporterException $e) {
             if ($io || $logger) {

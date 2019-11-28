@@ -11,12 +11,8 @@
 
 namespace Dmytrof\ImportBundle\Reader;
 
-use Dmytrof\ImportBundle\{
-    Exception\ReaderException, Model\ImportedData
-};
-use Zend\Xml2Json\{
-    Exception\RuntimeException, Xml2Json
-};
+use Dmytrof\ImportBundle\{Exception\ReaderException, Model\ImportedData};
+use Zend\Xml2Json\{Xml2Json, Exception\RuntimeException};
 
 class XmlReader extends AbstractReader
 {
