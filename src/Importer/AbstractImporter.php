@@ -352,7 +352,7 @@ abstract class AbstractImporter implements ImporterInterface
     /**
      * Adds entry id to processed
      * @param $entryId
-     * @return AbstractImporter]
+     * @return AbstractImporter
      */
     protected function addProcessedEntryId($entryId): self
     {
