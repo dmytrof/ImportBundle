@@ -19,8 +19,6 @@ class Repository extends EntityRepository implements EntityRepositoryInterface
 {
     use EntityRepositoryTrait;
 
-    public $alias = 'it';
-
     /**
      * Returns scheduled import tasks
      * @return TaskModel[]

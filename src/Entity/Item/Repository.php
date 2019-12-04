@@ -19,8 +19,6 @@ class Repository extends EntityRepository implements EntityRepositoryInterface
 {
     use EntityRepositoryTrait;
 
-    protected $alias = 'iti';
-
     /**
      * Returns imported item
      * @param int $taskId
