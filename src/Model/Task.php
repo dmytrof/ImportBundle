@@ -176,9 +176,9 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     protected $reader;
 
     /**
-     * {@inheritdoc}
+     * Task constructor.
      */
-    protected function init()
+    public function __construct()
     {
         $this->setInProgress(false);
         $this->setActive(true);

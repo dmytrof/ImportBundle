@@ -29,3 +29,7 @@ services:
             $name: import
             $logsDir: "%kernel.logs_dir%"
             $env: "%kernel.environment%"
+
+    Dmytrof\ImportBundle\EventListener\ImportDoctrineSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber }
