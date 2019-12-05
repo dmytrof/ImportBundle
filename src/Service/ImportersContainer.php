@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\{
 };
 
 use Dmytrof\ImportBundle\{Exception\ImporterException, Importer\ImporterInterface, Manager\ItemManager};
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportersContainer implements \IteratorAggregate
 {

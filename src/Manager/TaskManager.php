@@ -70,13 +70,13 @@ class TaskManager extends AbstractDoctrineManager
     }
 
     /**
-     * Returns available task
-     * @param int|null $id
-     * @return Task
+     * Returns task by code
+     * @param string $code
+     * @return Task|null
      */
-    public function getAvailableItem(?int $id): Task
+    public function getTaskByCode(string $code): ?Task
     {
-        return $this->getTask($id);
+        return $this->getRepository()->findOneBy(['code' => $code]);
     }
 
     /**
