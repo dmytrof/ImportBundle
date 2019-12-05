@@ -22,7 +22,10 @@ use Dmytrof\ImportBundle\Reader\{Options\ReaderOptionsInterface, ReaderInterface
 use Dmytrof\ImportBundle\Service\{ImportersContainer, ReadersContainer};
 use Symfony\Component\Console\{Output\OutputInterface, Style\SymfonyStyle};
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Serializer\{Exception\ExceptionInterface, Normalizer\ObjectNormalizer};
+use Symfony\Component\Serializer\{Exception\ExceptionInterface,
+    Normalizer\AbstractNormalizer,
+    Normalizer\ObjectNormalizer,
+    Serializer};
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -285,6 +288,15 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     }
 
     /**
+     * Returns serializer
+     * @return Serializer
+     */
+    public function getSerializer(): Serializer
+    {
+        return new Serializer([new ObjectNormalizer()]);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getTitleOfModel(): string
@@ -439,12 +451,10 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function getImportStatistics(): ?ImportStatistics
     {
         if (is_null($this->importStatistics)) {
-            try {
-                $this->importStatistics = (new ObjectNormalizer())->denormalize((array) $this->getImportStatisticsArr(), ImportStatistics::class);
-            } catch (ExceptionInterface $e) {
-                $this->importStatistics = new ImportStatistics();
-            }
+            $this->importStatistics = new ImportStatistics();
+            $this->importStatistics->fromArray((array) $this->getImportStatisticsArr());
         }
+
         return $this->importStatistics;
     }
 
@@ -456,12 +466,9 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     protected function setImportStatistics(?ImportStatistics $importStatistics): self
     {
         $this->importStatistics = $importStatistics;
-        try {
-            $importStatisticsArr = (new ObjectNormalizer())->normalize($this->importStatistics);
-        } catch (ExceptionInterface $e) {
-            $importStatisticsArr = null;
-        }
+        $importStatisticsArr = $this->importStatistics ? $this->importStatistics->toArray() : null;
         $this->setImportStatisticsArr($importStatisticsArr);
+
         return $this;
     }
 
@@ -503,6 +510,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         $this->importer = null;
         $this->importerCode = $importerCode;
         $this->updateImporterOptions($this->getImporter()->getOptions());
+
         return $this;
     }
 
@@ -517,6 +525,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                 ->setTask($this)
             ;
         }
+
         return $this->importer;
     }
 
@@ -547,6 +556,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     {
         $this->importerOptionsArr = $importerOptionsArr;
         $this->resetImporterOptionsHash();
+
         return $this;
     }
 
@@ -556,16 +566,15 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      */
     public function getImporterOptions(): ?ImporterOptionsInterface
     {
-        if (is_null($this->importerOptions) && $this->getImporter()->hasOptions()) {
+        if (is_null($this->importerOptions) && $this->getImporter() && $this->getImporter()->hasOptions()) {
             $optionsClass = $this->getImporter()->getOptionsClass();
-            try {
-                $this->importerOptions = (new ObjectNormalizer())->denormalize((array) $this->getImporterOptionsArr(), $optionsClass);
-                $this->importerOptions->prepareImportableFieldsOptions($this->getImporter()->getImportableFields());
-            } catch (ExceptionInterface $e) {
-                $this->readerOptions = new $optionsClass;
-            }
-            $this->importerOptions->attach($this);
+            $this->importerOptions = new $optionsClass();
+            $this->importerOptions->fromArray((array) $this->getImporterOptionsArr());
+            $this->importerOptions
+                ->prepareImportableFieldsOptions($this->getImporter()->getImportableFields())
+                ->attach($this);
         }
+
         return $this->importerOptions;
     }
 
@@ -577,12 +586,9 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     protected function setImporterOptions(?ImporterOptionsInterface $importerOptions): self
     {
         $this->importerOptions = $importerOptions;
-        try {
-            $importerOptionsArr = $this->getImporter() && $this->getImporter()->hasOptions() ? (new ObjectNormalizer())->normalize($this->importerOptions) : null;
-        } catch (ExceptionInterface $e) {
-            $importerOptionsArr = null;
-        }
+        $importerOptionsArr = $this->getImporter() && $this->getImporter()->hasOptions() && $this->importerOptions ? $this->importerOptions->toArray() : null;
         $this->setImporterOptionsArr($importerOptionsArr);
+
         return $this;
     }
 
@@ -606,6 +612,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         if (is_null($this->importerOptionsHash)) {
             $this->importerOptionsHash = !is_null($this->getImporterOptionsArr()) ? sha1(json_encode($this->getImporterOptionsArr())) : null;
         }
+
         return $this->importerOptionsHash;
     }
 
@@ -657,6 +664,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         $this->reader = null;
         $this->readerCode = $readerCode;
         $this->updateReaderOptions($this->getReader() ? $this->getReader()->getOptions()  : null);
+
         return $this;
     }
 
@@ -688,6 +696,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                 ->setTask($this)
             ;
         }
+
         return $this->reader;
     }
 
@@ -728,13 +737,11 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     {
         if (is_null($this->readerOptions) && $this->getReader() && $this->getReader()->hasOptions()) {
             $optionsClass = $this->getReader()->getOptionsClass();
-            try {
-                $this->readerOptions = (new ObjectNormalizer())->denormalize((array) $this->getReaderOptionsArr(), $optionsClass);
-            } catch (ExceptionInterface $e) {
-                $this->readerOptions = new $optionsClass;
-            }
+            $this->readerOptions = new $optionsClass();
+            $this->readerOptions->fromArray((array) $this->getReaderOptionsArr());
             $this->readerOptions->attach($this);
         }
+
         return $this->readerOptions;
     }
 
@@ -746,11 +753,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     protected function setReaderOptions(?ReaderOptionsInterface $readerOptions): self
     {
         $this->readerOptions = $readerOptions;
-        try {
-            $readerOptionsArr = $this->getReader() && $this->getReader()->hasOptions() ? (new ObjectNormalizer())->normalize($this->readerOptions) : null;
-        } catch (ExceptionInterface $e) {
-            $readerOptionsArr = null;
-        }
+        $readerOptionsArr = $this->getReader() && $this->getReader()->hasOptions() && $this->readerOptions ? $this->readerOptions->toArray() : null;
         $this->setReaderOptionsArr($readerOptionsArr);
 
         return $this;

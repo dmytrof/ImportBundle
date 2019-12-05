@@ -11,9 +11,10 @@
 
 namespace Dmytrof\ImportBundle\Importer\Options;
 
+use Dmytrof\ModelsManagementBundle\Model\ArrayConvertibleModelInterface;
 use Dmytrof\ImportBundle\Model\{ImportableFields, ImportableFieldsOptions};
 
-interface ImporterOptionsInterface extends \SplSubject
+interface ImporterOptionsInterface extends \SplSubject, ArrayConvertibleModelInterface
 {
     /**
      * Returns path delimiter

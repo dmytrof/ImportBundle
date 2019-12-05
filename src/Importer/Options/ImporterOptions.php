@@ -11,11 +11,14 @@
 
 namespace Dmytrof\ImportBundle\Importer\Options;
 
+use Dmytrof\ModelsManagementBundle\Model\{ArrayConvertibleModelInterface, Traits\ArrayConvertibleModelTrait};
 use Dmytrof\ImportBundle\Model\{ImportableFieldOptions, ImportableFields, ImportableFieldsOptions};
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ImporterOptions implements ImporterOptionsInterface, \SplObserver
 {
+    use ArrayConvertibleModelTrait;
+
     public const PATH_DELIMITER = '/';
     public const ID_FIELDS_DELIMITER = ',';
 
@@ -214,5 +217,34 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
         if ($subject instanceof ImportableFieldsOptions) {
             $this->notify();
         }
+    }
+
+    /**
+     * Converts to array importableFieldsOptions
+     * @return array
+     */
+    public function toArrayImportableFieldsOptions(): array
+    {
+        $array = [];
+        foreach ($this->getImportableFieldsOptions()->toArray() as $key => $value) {
+            $array[$key] = $value->toArray();
+        }
+        return $array;
+    }
+
+    /**
+     * Converts array to importableFieldsOptions
+     * @param array $data
+     * @return $this
+     */
+    public function fromArrayImportableFieldsOptions(array $data): self
+    {
+        $optionsArr = [];
+        foreach ($data as $key => $value) {
+            $optionsArr[$key] = (new ImportableFieldOptions())->fromArray($value);
+        }
+        $this->setImportableFieldsOptions(new ImportableFieldsOptions($optionsArr));
+
+        return $this;
     }
 }

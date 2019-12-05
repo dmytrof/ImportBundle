@@ -11,8 +11,12 @@
 
 namespace Dmytrof\ImportBundle\Reader\Options;
 
+use Dmytrof\ModelsManagementBundle\Model\Traits\ArrayConvertibleModelTrait;
+
 abstract class AbstractReaderOptions implements ReaderOptionsInterface
 {
+    use ArrayConvertibleModelTrait;
+
     /**
      * @var \SplObjectStorage
      */

@@ -11,7 +11,8 @@
 
 namespace Dmytrof\ImportBundle\Reader\Options;
 
-interface ReaderOptionsInterface extends \SplSubject
-{
+use Dmytrof\ModelsManagementBundle\Model\ArrayConvertibleModelInterface;
 
+interface ReaderOptionsInterface extends \SplSubject, ArrayConvertibleModelInterface
+{
 }

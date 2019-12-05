@@ -11,8 +11,12 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
-class ImportableFieldOptions implements \SplSubject
+use Dmytrof\ModelsManagementBundle\Model\{ArrayConvertibleModelInterface, Traits\ArrayConvertibleModelTrait};
+
+class ImportableFieldOptions implements \SplSubject, ArrayConvertibleModelInterface
 {
+    use ArrayConvertibleModelTrait;
+
     /**
      * @var \SplObjectStorage
      */

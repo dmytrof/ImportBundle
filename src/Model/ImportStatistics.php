@@ -11,8 +11,12 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
-class ImportStatistics
+use Dmytrof\ModelsManagementBundle\Model\{ArrayConvertibleModelInterface, Traits\ArrayConvertibleModelTrait};
+
+class ImportStatistics implements ArrayConvertibleModelInterface
 {
+    use ArrayConvertibleModelTrait;
+
     /**
      * @var int
      */
