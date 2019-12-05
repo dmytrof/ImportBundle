@@ -20,7 +20,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Dmytrof\ModelsManagementBundle\Exception\{FormErrorsException, InvalidTargetException};
-use Dmytrof\ModelsManagementBundle\{Manager\AbstractManager, Model\SimpleModelInterface};
+use Dmytrof\ModelsManagementBundle\{Manager\AbstractDoctrineManager,
+    Manager\AbstractManager,
+    Model\SimpleModelInterface};
 use Dmytrof\ImportBundle\{Exception\ImporterException, Manager\ItemManager, Form\Type\Importer\ImporterOptionsType};
 use Dmytrof\ImportBundle\Importer\Options\{ImporterOptions, ImporterOptionsInterface};
 use Dmytrof\ImportBundle\Model\{ImportableField, ImportableFields, ImportableFieldsOptions, ImportedData, ImportFormData, ImportStatistics, Item, Task};
@@ -538,14 +540,16 @@ abstract class AbstractImporter implements ImporterInterface
                 }
             }
             $this->addProcessedEntryId($entryId);
-            if ($progressBar->getProgress() % $butchLength == 0) {
+            if ($progressBar->getProgress() % $butchLength == 0 && $this->getManager() instanceof AbstractDoctrineManager) {
                 $this->getManager()->getManager()->flush();
                 $this->getManager()->getManager()->clear();
             }
         }
 
-        $this->getManager()->getManager()->flush();
-        $this->getManager()->getManager()->clear();
+        if ($this->getManager() instanceof AbstractDoctrineManager) {
+            $this->getManager()->getManager()->flush();
+            $this->getManager()->getManager()->clear();
+        }
 
         $progressBar->finish();
         $this->getOutput()->newLine(2);
@@ -596,6 +600,7 @@ abstract class AbstractImporter implements ImporterInterface
                 ->setConfigHash($this->getOptionsHash())
             ;
             $this->importFromItem($importedItem);
+            $this->saveImportedItem($importedItem);
         } else {
             $importedItem
                 ->setStatusId(Item::STATUS_SKIPPED)

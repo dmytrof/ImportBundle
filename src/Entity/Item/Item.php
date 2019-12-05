@@ -34,7 +34,6 @@ class Item extends Model
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-
     protected $taskId;
 
     /**
@@ -68,7 +67,7 @@ class Item extends Model
     protected $configHash;
 
     /**
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\Column(type="json", nullable=false)
      */
     protected $target;
 }
