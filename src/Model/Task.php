@@ -46,6 +46,13 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         self::PERIOD_EVERY_12_HOURS => 'label.import_task.periods.every_12_hours',
         self::PERIOD_EVERY_24_HOURS => 'label.import_task.periods.every_24_hours',
     ];
+    public const PERIOD_CHOICES = [
+        self::PERIOD_EVERY_HOUR,
+        self::PERIOD_EVERY_4_HOURS,
+        self::PERIOD_EVERY_8_HOURS,
+        self::PERIOD_EVERY_12_HOURS,
+        self::PERIOD_EVERY_24_HOURS,
+    ];
 
     /**
      * @var ImportersContainer
@@ -73,8 +80,17 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * @var string
      *
      * @Assert\NotBlank
+     * @Assert\LessThanOrEqual(250)
      */
     protected $title;
+
+    /**
+     * Unique code if needed
+     * @var string
+     *
+     * @Assert\LessThanOrEqual(250)
+     */
+    protected $code;
 
     /**
      * Feed link
@@ -88,7 +104,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * Period
      * @var int
      *
-     * @Assert\GreaterThanOrEqual(1800)
+     * @Assert\Choice(Task::PERIOD_CHOICES)
      */
     protected $period;
 
@@ -294,6 +310,26 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function getTitle(): ?string
     {
         return $this->title;
+    }
+
+    /**
+     * Returns code
+     * @return string|null
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * Returns code
+     * @param string|null $code
+     * @return Task
+     */
+    public function setCode(?string $code): self
+    {
+        $this->code = $code;
+        return $this;
     }
 
     /**

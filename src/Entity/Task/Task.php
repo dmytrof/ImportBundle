@@ -15,13 +15,18 @@ use Dmytrof\ModelsManagementBundle\Model\Traits\TimestampableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Blameable\Traits\BlameableEntity;
 use Dmytrof\ImportBundle\{Model\Task as Model, Entity\Task\Repository};
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Table(name="dmytrof_import_task", indexes={
+ * @ORM\Table(name="dmytrof_import_task", uniqueConstraints={
+ *     @ORM\UniqueConstraint(name="dmytrof_import_task_code", columns={"code"}),
+ *  }, indexes={
  *     @ORM\Index(name="dmytrof_import_task_importer_code_idx",  columns={"importer_code"}),
  *     @ORM\Index(name="dmytrof_import_task_reader_code_idx",  columns={"reader_code"}),
  *  })
  * @ORM\Entity(repositoryClass=Repository::class)
+ *
+ * @UniqueEntity(fields={"code"}, ignoreNull=true)
  */
 class Task extends Model
 {
@@ -39,6 +44,11 @@ class Task extends Model
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     protected $title;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $code;
 
     /**
      * @ORM\Column(type="text", nullable=true)
