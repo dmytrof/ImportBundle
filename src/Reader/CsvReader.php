@@ -65,38 +65,17 @@ class CsvReader extends AbstractReader
         try {
             $filesystem = new Filesystem();
             $csvFileName = $filesystem->tempnam('/tmp','csv');
-            $dataFileName = $filesystem->tempnam('/tmp','data');
             $filesystem->dumpFile($csvFileName, $response->getBody()->getContents());
 
             $file = new \SplFileObject($csvFileName);
             $file->setFlags(\SplFileObject::READ_CSV);
             $file->setCsvControl($this->getOptions()->getDelimiter(), $this->getOptions()->getEnclosure(), $this->getOptions()->getEscape());
 
-            $importedData = new ImportedDataFile($dataFileName);
-
-            $headingRow = null;
-            $firstRow = true;
-            $i=0;
-            foreach ($file as $row) {
-                if ($this->isEmptyRow($row)) {
-                    continue;
-                }
-                if (is_null($headingRow) && $this->getOptions()->getHasHeadingRow()) {
-                    $headingRow = $row;
-                    continue;
-                }
-                $importedData->addRow($row, $firstRow);
-                $firstRow = false;
-                $i++;
-                if ($options['exampleData'] && $i > 100) {
-                    break;
-                }
-            }
-            $importedData->setHeadingRow($headingRow);
-
-            return $importedData;
+            return $this->dumpImportedDataToFile($file, $options);
         } catch (IOException $e) {
             throw new ReaderException(sprintf('Temporary file creating error: %s', $e->getMessage()));
         }
     }
+
+
 }

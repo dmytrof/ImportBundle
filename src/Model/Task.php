@@ -578,7 +578,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     {
         $this->importerOptions = $importerOptions;
         try {
-            $importerOptionsArr = $this->getReader() && $this->getReader()->hasOptions() ? (new ObjectNormalizer())->normalize($this->importerOptions) : null;
+            $importerOptionsArr = $this->getImporter() && $this->getImporter()->hasOptions() ? (new ObjectNormalizer())->normalize($this->importerOptions) : null;
         } catch (ExceptionInterface $e) {
             $importerOptionsArr = null;
         }

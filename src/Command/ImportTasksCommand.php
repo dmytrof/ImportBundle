@@ -84,7 +84,7 @@ class ImportTasksCommand extends Command
             $tasksCount = sizeof($taskIds);
             $io = new SymfonyStyle($input, $output);
             if ($tasksCount) {
-                $io->note('There are '.$tasksCount.' scheduled tasks');
+                $io->note(sprintf('There are %s scheduled tasks', $tasksCount));
                 foreach ($taskIds as $taskId) {
                     $this->importTask($taskId, $output, $input);
                 }
@@ -106,7 +106,7 @@ class ImportTasksCommand extends Command
             $this->getTaskManager()->importTask($taskId, $output, $input);
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
-            $io->error('Import task '.$taskId.' error: '.$e->getMessage());
+            $io->error(sprintf('Import task "%s" error: %s', $taskId, $e->getMessage()));
         }
     }
 }

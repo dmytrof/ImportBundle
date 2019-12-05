@@ -12,8 +12,10 @@
 namespace Dmytrof\ImportBundle\Reader;
 
 use Dmytrof\ImportBundle\Exception\ReaderException;
-use Dmytrof\ImportBundle\Model\Task;
+use Dmytrof\ImportBundle\Model\{ImportedDataFile, Task};
 use Dmytrof\ImportBundle\Reader\Options\ReaderOptionsInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -270,5 +272,45 @@ abstract class AbstractReader implements ReaderInterface
 
         $resolver->setAllowedTypes('exampleData', ['bool']);
         return $resolver;
+    }
+
+    /**
+     * Dumps imported data to file
+     * @param iterable $data
+     * @param array $options
+     * @return ImportedDataFile
+     */
+    protected function dumpImportedDataToFile(iterable $data, array $options = []): ImportedDataFile
+    {
+        try {
+            $filesystem = new Filesystem();
+            $dataFileName = $filesystem->tempnam('/tmp','data');
+
+            $importedData = new ImportedDataFile($dataFileName);
+
+            $headingRow = null;
+            $firstRow = true;
+            $i=0;
+            foreach ($data as $row) {
+                if ($this->isEmptyRow($row)) {
+                    continue;
+                }
+                if (is_null($headingRow) && $this->getOptions()->getHasHeadingRow()) {
+                    $headingRow = $row;
+                    continue;
+                }
+                $importedData->addRow($row, $firstRow);
+                $firstRow = false;
+                $i++;
+                if (isset($options['exampleData']) && $options['exampleData'] && $i > 100) {
+                    break;
+                }
+            }
+            $importedData->setHeadingRow($headingRow);
+
+            return $importedData;
+        } catch (IOException $e) {
+            throw new ReaderException(sprintf('Temporary file creating error: %s', $e->getMessage()));
+        }
     }
 }

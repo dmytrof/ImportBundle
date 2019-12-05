@@ -495,7 +495,7 @@ abstract class AbstractImporter implements ImporterInterface
 
         $this->beforeImportData();
 
-        $items = $data->isDataInRoot() ? $data->getData() : $this->getEntryFieldValue((array) $data->getData(), $this->getOptions()->getDataPath());
+        $items = ($data->isDataInRoot() || !$this->getOptions()->getDataPath()) ? $data->getData() : $this->getEntryFieldValue((array) $data->getData(), $this->getOptions()->getDataPath());
         $itemsCount = count($items);
 
         $this->getOutput()->text('Total entries: '.$itemsCount);

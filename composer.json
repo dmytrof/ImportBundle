@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^7.2",
+        "ext-json": "*",
         "symfony/monolog-bundle": "^3.5",
         "symfony/http-client": "^4.3|^5.0",
         "symfony/serializer": "^4.3|^5.0",
