@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Dmytrof\ImportBundle\Form\Type\Importer\Data;
+namespace Dmytrof\ImportBundle\Form\Type\DataType;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Form\{AbstractType, Extension\Core\Type\TextType, FormBuilderInterface};

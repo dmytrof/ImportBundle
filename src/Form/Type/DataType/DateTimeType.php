@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Dmytrof\ImportBundle\Form\Type\Importer\Data;
+namespace Dmytrof\ImportBundle\Form\Type\DataType;
 
 use Dmytrof\ImportBundle\Form\DataTransformer\ValueToDateTimeTransformer;
 use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
