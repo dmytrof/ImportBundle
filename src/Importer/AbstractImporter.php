@@ -380,7 +380,7 @@ abstract class AbstractImporter implements ImporterInterface
      */
     public function findOrCreateObject(Item $importedItem, ImportFormData $importFormData): SimpleModelInterface
     {
-        return $this->getManager()->new();
+        return $importedItem->getTarget()->getModel() ?: $this->getManager()->new();
     }
 
     /**
@@ -593,7 +593,6 @@ abstract class AbstractImporter implements ImporterInterface
     public function importEntryItem(string $itemId, array $item): void
     {
         $importedItem = $this->getImportedItem($itemId, $item);
-
         if ($importedItem->getDataHash() !== $importedItem->generateDataHash($item) || $importedItem->getConfigHash() !== $this->getOptionsHash()) {
             $importedItem
                 ->setData($item)
@@ -632,6 +631,7 @@ abstract class AbstractImporter implements ImporterInterface
                 'requestMethod' => $options['method'],
             ]);
         }
+
         return $this->forms[$hash];
     }
 
@@ -643,7 +643,6 @@ abstract class AbstractImporter implements ImporterInterface
     protected function importFromItem(Item $importedItem, bool $flush = false): void
     {
         $importFormData = $this->getImportFormData($importedItem);
-//        print_r($importFormData);
         try {
             $object = $importedItem->getTarget()->getModel();
         } catch (InvalidTargetException $e) {
@@ -705,11 +704,6 @@ abstract class AbstractImporter implements ImporterInterface
                 ->setErrors([$e->getMessage()])
             ;
         }
-        $this->saveImportedItem($importedItem, $flush);
-        if ($flush) {
-            $this->getManager()->getManager()->detach($importedItem);
-            $this->getManager()->getManager()->detach($object);
-        }
     }
 
     /**
@@ -725,7 +719,7 @@ abstract class AbstractImporter implements ImporterInterface
             $importedItem
                 ->setStatusId(Item::STATUS_DUPLICATE)
                 ->setConfigHash($this->getOptionsHash())
-                ->setTarget($this->getManager()->new())
+//                ->setTarget($this->getManager()->new())
             ;
             $this->saveImportedItem($importedItem);
         }
@@ -861,6 +855,7 @@ abstract class AbstractImporter implements ImporterInterface
             }
             array_push($hashParams, $value);
         }
+
         return $this->makeHash($hashParams);
     }
 
@@ -901,6 +896,7 @@ abstract class AbstractImporter implements ImporterInterface
             }
             $value = $value[$key];
         }
+
         return $value;
     }
 

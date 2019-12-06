@@ -35,11 +35,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected $entityProperty;
 
     /**
-     * @var string
-     */
-    protected $entityPropertyCondition;
-
-    /**
      * @var bool
      */
     protected $allowNull;
@@ -49,15 +44,13 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
      * @param ManagerRegistry $registry
      * @param string $entityClass
      * @param string $entityProperty
-     * @param string $entityPropertyCondition
      * @param bool $allowNull
      */
-    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, string $entityPropertyCondition, bool $allowNull = true)
+    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, bool $allowNull = true)
     {
         $this->registry = $registry;
         $this->entityClass = $entityClass;
         $this->entityProperty = $entityProperty;
-        $this->entityPropertyCondition = $entityPropertyCondition;
         $this->allowNull = $allowNull;
     }
 
@@ -80,6 +73,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
         if ($entity instanceof $this->entityClass) {
             $value = $entity->{'get'.Inflector::classify($this->entityProperty)}();
         }
+
         return $value;
     }
 
@@ -99,6 +93,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
             }
             return null;
         }
+
         return (string) $value;
     }
 
@@ -116,36 +111,21 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
         }
 
         $repo = $this->getRepository();
-//        if ($repo instanceof EntityRepositoryInterface && $repo->getPreConfiguredFilters()->hasFilter($this->filterName)) {
-//            $alias = $repo->getAlias();
-//            $builder = $repo->getQueryBuilder(['alias' => $alias]);
-//            $filter = $repo
-//                ->getPreConfiguredFilters()
-//                ->getFilter($this->filterName)
-//                ->setup($builder, [
-//                    'condition' => $this->filterCondition ,
-//                    'value' => $value,
-//                ], $alias)
-//            ;
-//            $builder->andWhere($filter->buildWhereCondition($builder));
-//            $result = $builder->getQuery()->getResult();
-//            $entity = null;
-//            if (!is_array($result)) {
-//                $entity = $result;
-//            } else if (count($result) > 0) {
-//                $entity = array_shift($result);
-//            }
-//            if (!$entity) {
-//                $entity = $this->createNewEntity($value);
-//            }
-//            if (!$entity instanceof $this->modelClass) {
-//                throw new TransformationFailedException(sprintf('The entity with %s "%s" could not be found', $this->modelProperty, $value));
-//            }
-//            return $entity;
-//
-//        } else {
-            throw new TransformationFailedException(sprintf('Unable to find the entity from repository %s', get_class($repo)));
-//        }
+        $result = $this->getRepository()->findBy([$this->entityProperty => $value]);
+        $entity = null;
+        if ($result instanceof $this->entityClass) {
+            $entity = $result;
+        } else if (count($result) > 0) {
+            $entity = array_shift($result);
+        }
+        if (!$entity) {
+            $entity = $this->createNewEntity($value);
+        }
+        if (!$entity instanceof $this->entityClass) {
+            throw new TransformationFailedException(sprintf('The entity with %s "%s" could not be found', $this->entityProperty, $value));
+        }
+
+        return $entity;
     }
 
     /**
@@ -155,13 +135,11 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
      */
     protected function createNewEntity(string $value)
     {
-        if ($this->getRepository() instanceof EntityRepositoryInterface) {
-            $entity = $this->getRepository()->createNew();
-            $entity->{'set'.Inflector::classify($this->entityProperty)}($value);
-            $this->registry->getManager()->persist($entity);
-            $this->registry->getManager()->flush();
-            return $entity;
-        }
-        throw new TransformationFailedException(sprintf('Unable to create new entity from repository %s', get_class($this->getRepository())));
+        $entity = ($this->getRepository() instanceof EntityRepositoryInterface) ? $this->getRepository()->createNew() : new $this->entityClass();
+        $entity->{'set'.Inflector::classify($this->entityProperty)}($value);
+        $this->registry->getManager()->persist($entity);
+        $this->registry->getManager()->flush();
+
+        return $entity;
     }
 }

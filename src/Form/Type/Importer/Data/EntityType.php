@@ -43,7 +43,6 @@ class EntityType extends AbstractType
             'required' => false,
             'entity_class' => null,
             'entity_property' => 'title',
-            'entity_property_condition' => '=',
             'compound' => false,
         ]);
 
@@ -59,7 +58,7 @@ class EntityType extends AbstractType
             ->resetModelTransformers()
             ->resetViewTransformers()
         ;
-        $builder->addViewTransformer(new EntityToPropertyValueTransformer($this->registry, $options['entity_class'], $options['entity_property'], $options['entity_property_condition'], !$options['required']));
+        $builder->addViewTransformer(new EntityToPropertyValueTransformer($this->registry, $options['entity_class'], $options['entity_property'], !$options['required']));
     }
 
     /**

@@ -36,7 +36,7 @@ class ValueToDateTimeTransformer implements DataTransformerInterface
             return $dateStr;
         }
         try {
-            $date = new \DateTime((string)$dateStr);
+            $date = new \DateTime((string) $dateStr);
             $date->setTimezone((new \DateTime())->getTimezone());
             return $date;
         } catch (\Exception $e) {
