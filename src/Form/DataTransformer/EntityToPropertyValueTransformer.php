@@ -110,7 +110,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
             throw new TransformationFailedException(sprintf('Empty value is not allowed'));
         }
 
-        $repo = $this->getRepository();
         $result = $this->getRepository()->findBy([$this->entityProperty => $value]);
         $entity = null;
         if ($result instanceof $this->entityClass) {

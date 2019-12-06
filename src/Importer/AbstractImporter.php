@@ -34,7 +34,7 @@ abstract class AbstractImporter implements ImporterInterface
     public const OPTIONS_CLASS = ImporterOptions::class;
     public const OPTIONS_FORM_CLASS = ImporterOptionsType::class;
     public const IMPORTER_FORM_CLASS = null;
-    public const COMPOUND_FIELD_NAME_DELIMITER = '_';
+    public const COMPOUND_FIELD_NAME_DELIMITER = '.';
 
     /**
      * @var TranslatorInterface
@@ -330,7 +330,7 @@ abstract class AbstractImporter implements ImporterInterface
         /** @var Form $field */
         foreach ($form as $field) {
             if ($field->getConfig()->getCompound() && $field->getConfig()->getDataClass()) {
-                $this->addImportableFields($fields, $field, $field->getName().static::COMPOUND_FIELD_NAME_DELIMITER, $this->getTranslator()->trans($field->getConfig()->getOption('label')).' > ');
+                $this->addImportableFields($fields, $field, $prefix.$field->getName().static::COMPOUND_FIELD_NAME_DELIMITER, $this->getTranslator()->trans($field->getConfig()->getOption('label')).' > ');
             } else {
                 $fields->add(new ImportableField($prefix.$field->getName(), $labelPrefix.$this->getTranslator()->trans($field->getConfig()->getOption('label'))));
             }
