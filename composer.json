@@ -15,7 +15,6 @@
         "ext-json": "*",
         "symfony/monolog-bundle": "^3.5",
         "symfony/http-client": "^4.3|^5.0",
-        "symfony/serializer": "^4.3|^5.0",
         "symfony/doctrine-bridge": "^4.3|^5.0",
         "dmytrof/models-management-bundle": "^1.0",
         "guzzlehttp/guzzle": "^6.4",

@@ -22,10 +22,6 @@ use Dmytrof\ImportBundle\Reader\{Options\ReaderOptionsInterface, ReaderInterface
 use Dmytrof\ImportBundle\Service\{ImportersContainer, ReadersContainer};
 use Symfony\Component\Console\{Output\OutputInterface, Style\SymfonyStyle};
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Serializer\{Exception\ExceptionInterface,
-    Normalizer\AbstractNormalizer,
-    Normalizer\ObjectNormalizer,
-    Serializer};
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -285,15 +281,6 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public static function getPeriodsTitles()
     {
         return static::PERIODS;
-    }
-
-    /**
-     * Returns serializer
-     * @return Serializer
-     */
-    public function getSerializer(): Serializer
-    {
-        return new Serializer([new ObjectNormalizer()]);
     }
 
     /**
