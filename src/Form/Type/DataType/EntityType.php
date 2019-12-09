@@ -37,16 +37,18 @@ class EntityType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'required' => false,
             'entity_class' => null,
             'entity_property' => 'title',
             'compound' => false,
+            'multiple' => false,
+            'multiple_data_type' => EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION,
         ]);
 
         $resolver->setRequired('entity_class');
+        $resolver->addAllowedTypes('multiple', ['bool']);
+        $resolver->addAllowedValues('multiple_data_type', [EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_ARRAY, EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION]);
     }
 
     /**
@@ -58,7 +60,7 @@ class EntityType extends AbstractType
             ->resetModelTransformers()
             ->resetViewTransformers()
         ;
-        $builder->addViewTransformer(new EntityToPropertyValueTransformer($this->registry, $options['entity_class'], $options['entity_property'], !$options['required']));
+        $builder->addViewTransformer(new EntityToPropertyValueTransformer($this->registry, $options['entity_class'], $options['entity_property'], $options['multiple'], $options['multiple_data_type'], !$options['required']));
     }
 
     /**

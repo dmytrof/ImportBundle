@@ -13,12 +13,16 @@ namespace Dmytrof\ImportBundle\Form\DataTransformer;
 
 use Dmytrof\ModelsManagementBundle\Repository\EntityRepositoryInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Form\{DataTransformerInterface, Exception\TransformationFailedException};
 
 class EntityToPropertyValueTransformer implements DataTransformerInterface
 {
+    public const MULTIPLE_DATA_TYPE_ARRAY = 'array';
+    public const MULTIPLE_DATA_TYPE_COLLECTION = 'collection';
+
     /**
      * @var ManagerRegistry
      */
@@ -37,6 +41,16 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     /**
      * @var bool
      */
+    protected $multiple;
+
+    /**
+     * @var string
+     */
+    protected $multipleDataType;
+
+    /**
+     * @var bool
+     */
     protected $allowNull;
 
     /**
@@ -44,13 +58,17 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
      * @param ManagerRegistry $registry
      * @param string $entityClass
      * @param string $entityProperty
+     * @param bool $multiple
+     * @param string|null $multipleDataType
      * @param bool $allowNull
      */
-    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, bool $allowNull = true)
+    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, bool $multiple = false, string $multipleDataType = null, bool $allowNull = true)
     {
         $this->registry = $registry;
         $this->entityClass = $entityClass;
         $this->entityProperty = $entityProperty;
+        $this->multiple = $multiple;
+        $this->multipleDataType = $multipleDataType === self::MULTIPLE_DATA_TYPE_ARRAY ? self::MULTIPLE_DATA_TYPE_ARRAY : self::MULTIPLE_DATA_TYPE_COLLECTION;
         $this->allowNull = $allowNull;
     }
 
@@ -61,20 +79,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected function getRepository(): EntityRepository
     {
         return $this->registry->getRepository($this->entityClass);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($entity)
-    {
-        $value = null;
-
-        if ($entity instanceof $this->entityClass) {
-            $value = $entity->{'get'.Inflector::classify($this->entityProperty)}();
-        }
-
-        return $value;
     }
 
     /**
@@ -98,18 +102,25 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Converts entity to string
+     * @param $entity
+     * @return string|null
      */
-    public function reverseTransform($value)
+    protected function convertEntityToString($entity): ?string
     {
-        $value = $this->stringifyValue($value);
-
-        if ($this->allowNull && empty($value)) {
-            return null;
-        } else if (!$this->allowNull && empty($value)) {
-            throw new TransformationFailedException(sprintf('Empty value is not allowed'));
+        if ($entity instanceof $this->entityClass) {
+            return $entity->{'get'.Inflector::classify($this->entityProperty)}();
         }
+        return null;
+    }
 
+    /**
+     * Converts string to entity
+     * @param $value
+     * @return array|mixed|null
+     */
+    protected function convertStringToEntity($value)
+    {
         $result = $this->getRepository()->findBy([$this->entityProperty => $value]);
         $entity = null;
         if ($result instanceof $this->entityClass) {
@@ -123,8 +134,57 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
         if (!$entity instanceof $this->entityClass) {
             throw new TransformationFailedException(sprintf('The entity with %s "%s" could not be found', $this->entityProperty, $value));
         }
-
         return $entity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transform($entity)
+    {
+        if ($this->multiple) {
+            $entity = is_iterable($entity) ? $entity : [$entity];
+            $values = [];
+            foreach ($entity as $_entity) {
+                array_push($values, $this->convertEntityToString($_entity));
+            }
+            $values = array_filter($values, function ($v) { return !is_null($v);});
+
+            return $this->multipleDataType === self::MULTIPLE_DATA_TYPE_ARRAY ? $values : new ArrayCollection($values);
+        }
+
+        return $this->convertEntityToString($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reverseTransform($value)
+    {
+        if ($this->multiple) {
+            $value = is_iterable($value) ? $value : [$value];
+            $entities = [];
+            foreach ($value as $val) {
+                $val = $this->stringifyValue($val);
+                try {
+                    array_push($entities, $this->convertStringToEntity($val));
+                } catch (TransformationFailedException $e) {
+                }
+                $entities = array_filter($entities, function ($v) { return !is_null($v);});
+            }
+
+            return $this->multipleDataType === self::MULTIPLE_DATA_TYPE_ARRAY ? $entities : new ArrayCollection($entities);
+        } else {
+            $value = $this->stringifyValue($value);
+
+            if ($this->allowNull && empty($value)) {
+                return null;
+            } else if (!$this->allowNull && empty($value)) {
+                throw new TransformationFailedException(sprintf('Empty value is not allowed'));
+            }
+
+            return $this->convertStringToEntity($value);
+        }
     }
 
     /**
