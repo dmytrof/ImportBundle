@@ -719,7 +719,7 @@ abstract class AbstractImporter implements ImporterInterface
             $importedItem
                 ->setStatusId(Item::STATUS_DUPLICATE)
                 ->setConfigHash($this->getOptionsHash())
-//                ->setTarget($this->getManager()->new())
+                ->setTarget($this->getManager()->new())
             ;
             $this->saveImportedItem($importedItem);
         }
