@@ -13,7 +13,7 @@ namespace Dmytrof\ImportBundle\Reader;
 
 use Doctrine\Common\Inflector\Inflector;
 use Dmytrof\ImportBundle\Model\ImportedData;
-use Zend\Feed\Reader\{Reader, Entry\EntryInterface};
+use Laminas\Feed\Reader\{Reader, Entry\EntryInterface};
 
 class RssReader extends AbstractReader
 {

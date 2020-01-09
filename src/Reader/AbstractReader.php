@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use GuzzleHttp\{Client, Exception\ClientException};
 use Psr\Http\Message\ResponseInterface;
-use Zend\Json\Json;
+use Laminas\Json\Json;
 
 abstract class AbstractReader implements ReaderInterface
 {
