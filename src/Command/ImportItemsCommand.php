@@ -51,7 +51,7 @@ class ImportItemsCommand extends Command
             ->addOption('batch', 'b', InputOption::VALUE_OPTIONAL, 'Scheduled batch', 1000)
             ->addOption('task', 't', InputOption::VALUE_OPTIONAL, 'Import task id')
             ->addOption('period', 'p', InputOption::VALUE_OPTIONAL, 'Period in seconds to execute commend')
-            ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Force import')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
 		;
 	}
 
