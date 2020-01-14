@@ -593,7 +593,7 @@ abstract class AbstractImporter implements ImporterInterface
     public function importEntryItem(string $itemId, array $item): void
     {
         $importedItem = $this->getImportedItem($itemId, $item);
-        if ($importedItem->getDataHash() !== $importedItem->generateDataHash($item) || $importedItem->getConfigHash() !== $this->getOptionsHash()) {
+        if ($this->getTask()->isForceImport() || $importedItem->isForceImport() || $importedItem->getDataHash() !== $importedItem->generateDataHash($item) || $importedItem->getConfigHash() !== $this->getOptionsHash()) {
             $importedItem
                 ->setData($item)
                 ->setConfigHash($this->getOptionsHash())

@@ -51,6 +51,7 @@ class ImportItemsCommand extends Command
             ->addOption('batch', 'b', InputOption::VALUE_OPTIONAL, 'Scheduled batch', 1000)
             ->addOption('task', 't', InputOption::VALUE_OPTIONAL, 'Import task id')
             ->addOption('period', 'p', InputOption::VALUE_OPTIONAL, 'Period in seconds to execute commend')
+            ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Force import')
 		;
 	}
 
@@ -132,7 +133,7 @@ class ImportItemsCommand extends Command
     protected function importItem(string $itemId, OutputInterface $output, InputInterface $input)
     {
         try {
-            $this->getItemManager()->importItem($itemId, $output, $input);
+            $this->getItemManager()->importItem($itemId, $input->getOption('force'), $output, $input);
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
             $io->error('Import item '.$itemId.' error: '.$e->getMessage());

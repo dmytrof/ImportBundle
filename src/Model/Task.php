@@ -191,6 +191,11 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     protected $reader;
 
     /**
+     * @var bool
+     */
+    protected $forceImport = false;
+
+    /**
      * Task constructor.
      */
     public function __construct()
@@ -847,5 +852,25 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function getDataFromLink(bool $exampleData = false): ImportedData
     {
         return $this->getReader()->getDataFromLink($this->getLink(), ['exampleData' => $exampleData]);
+    }
+
+    /**
+     * Checks if force import
+     * @return bool
+     */
+    public function isForceImport(): bool
+    {
+        return (bool) $this->forceImport;
+    }
+
+    /**
+     * Sets force import
+     * @param bool|null $forceImport
+     * @return Task
+     */
+    public function setForceImport(?bool $forceImport = true): Task
+    {
+        $this->forceImport = (bool) $forceImport;
+        return $this;
     }
 }

@@ -41,6 +41,11 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     /**
      * @var bool
      */
+    protected $createEntityIfNotExists;
+
+    /**
+     * @var bool
+     */
     protected $multiple;
 
     /**
@@ -61,8 +66,9 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
      * @param bool $multiple
      * @param string|null $multipleDataType
      * @param bool $allowNull
+     * @param bool $createEntityIfNotExists
      */
-    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, bool $multiple = false, string $multipleDataType = null, bool $allowNull = true)
+    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, bool $multiple = false, string $multipleDataType = null, bool $allowNull = true, bool $createEntityIfNotExists = true)
     {
         $this->registry = $registry;
         $this->entityClass = $entityClass;
@@ -70,6 +76,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
         $this->multiple = $multiple;
         $this->multipleDataType = $multipleDataType === self::MULTIPLE_DATA_TYPE_ARRAY ? self::MULTIPLE_DATA_TYPE_ARRAY : self::MULTIPLE_DATA_TYPE_COLLECTION;
         $this->allowNull = $allowNull;
+        $this->createEntityIfNotExists = $createEntityIfNotExists;
     }
 
     /**
@@ -128,7 +135,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
         } else if (count($result) > 0) {
             $entity = array_shift($result);
         }
-        if (!$entity) {
+        if (!$entity && $this->createEntityIfNotExists) {
             $entity = $this->createNewEntity($value);
         }
         if (!$entity instanceof $this->entityClass) {
