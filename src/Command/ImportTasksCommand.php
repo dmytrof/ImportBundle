@@ -104,7 +104,7 @@ class ImportTasksCommand extends Command
     protected function importTask(int $taskId, OutputInterface $output, InputInterface $input)
     {
         try {
-            $this->getTaskManager()->importTask($taskId, (bool) $input->getOption('force'), $output, $input);
+            $this->getTaskManager()->importTask($taskId, $input->hasOption('force'), $output, $input);
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
             $io->error(sprintf('Import task "%s" error: %s', $taskId, $e->getMessage()));
