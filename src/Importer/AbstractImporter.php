@@ -35,6 +35,7 @@ abstract class AbstractImporter implements ImporterInterface
     public const OPTIONS_FORM_CLASS = ImporterOptionsType::class;
     public const IMPORTER_FORM_CLASS = null;
     public const COMPOUND_FIELD_NAME_DELIMITER = '.';
+    public const BUTCH_LENGTH = 10;
 
     /**
      * @var TranslatorInterface
@@ -116,6 +117,15 @@ abstract class AbstractImporter implements ImporterInterface
     public static function getImporterFormClass(): ?string
     {
         return static::IMPORTER_FORM_CLASS;
+    }
+
+    /**
+     * Returns butch length
+     * @return int
+     */
+    public static function getButchLength(): int
+    {
+        return static::BUTCH_LENGTH;
     }
 
     /**
@@ -503,7 +513,9 @@ abstract class AbstractImporter implements ImporterInterface
         $this->getOutput()->text('Total entries: '.$itemsCount);
         $this->getLogger()->info('Processing data: END', ['total_entries' => $itemsCount]);
 
-        $butchLength = 10;
+        $butchLength = $this->getButchLength();
+        echo 'Butch length: ';
+        var_dump($butchLength);
 
         $this->getOutput()->section('Importing');
         $this->getLogger()->info('Importing: START');
