@@ -554,6 +554,9 @@ abstract class AbstractImporter implements ImporterInterface
                 $this->getManager()->getManager()->flush();
                 $this->getManager()->getManager()->clear();
             }
+            unset($row);
+            unset($item);
+            unset($entryId);
         }
 
         if ($this->getManager() instanceof AbstractDoctrineManager) {
@@ -618,6 +621,7 @@ abstract class AbstractImporter implements ImporterInterface
             $this->getImportStatistics()->incrementSkipped();
             $this->logImportItemResult('info', 'SKIPPED', $importedItem->getTarget()->getModel(), $this->getImportFormData($importedItem));
         }
+        unset($importedItem);
     }
 
     public function configureGetFormOptions(OptionsResolver $resolver): OptionsResolver

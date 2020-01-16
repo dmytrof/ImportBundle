@@ -39,44 +39,96 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected $entityProperty;
 
     /**
-     * @var bool
+     * @var string
      */
-    protected $createEntityIfNotExists;
+    protected $entityIdProperty = 'id';
 
     /**
      * @var bool
      */
-    protected $multiple;
+    protected $createEntityIfNotExists = false;
+
+    /**
+     * @var bool
+     */
+    protected $multiple = false;
 
     /**
      * @var string
      */
-    protected $multipleDataType;
+    protected $multipleDataType = self::MULTIPLE_DATA_TYPE_COLLECTION;
 
     /**
      * @var bool
      */
-    protected $allowNull;
+    protected $allowNull = true;
 
     /**
      * EntityToPropertyValueTransformer constructor.
      * @param ManagerRegistry $registry
      * @param string $entityClass
      * @param string $entityProperty
-     * @param bool $multiple
-     * @param string|null $multipleDataType
-     * @param bool $allowNull
-     * @param bool $createEntityIfNotExists
      */
-    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty, bool $multiple = false, string $multipleDataType = null, bool $allowNull = true, bool $createEntityIfNotExists = true)
+    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty)
     {
         $this->registry = $registry;
         $this->entityClass = $entityClass;
         $this->entityProperty = $entityProperty;
-        $this->multiple = $multiple;
-        $this->multipleDataType = $multipleDataType === self::MULTIPLE_DATA_TYPE_ARRAY ? self::MULTIPLE_DATA_TYPE_ARRAY : self::MULTIPLE_DATA_TYPE_COLLECTION;
-        $this->allowNull = $allowNull;
+    }
+
+    /**
+     * Sets entity ID property
+     * @param string $entityIdProperty
+     * @return EntityToPropertyValueTransformer
+     */
+    public function setEntityIdProperty(string $entityIdProperty): self
+    {
+        $this->entityIdProperty = $entityIdProperty;
+        return $this;
+    }
+
+    /**
+     * Sets create entity if not exists flag
+     * @param bool $createEntityIfNotExists
+     * @return EntityToPropertyValueTransformer
+     */
+    public function setCreateEntityIfNotExists(bool $createEntityIfNotExists = true): self
+    {
         $this->createEntityIfNotExists = $createEntityIfNotExists;
+        return $this;
+    }
+
+    /**
+     * Sets multiple
+     * @param bool $multiple
+     * @return EntityToPropertyValueTransformer
+     */
+    public function setMultiple(bool $multiple = true): self
+    {
+        $this->multiple = $multiple;
+        return $this;
+    }
+
+    /**
+     * Sets multiple data type
+     * @param string $multipleDataType
+     * @return EntityToPropertyValueTransformer
+     */
+    public function setMultipleDataType(string $multipleDataType): self
+    {
+        $this->multipleDataType = $multipleDataType === self::MULTIPLE_DATA_TYPE_ARRAY ? self::MULTIPLE_DATA_TYPE_ARRAY : self::MULTIPLE_DATA_TYPE_COLLECTION;;
+        return $this;
+    }
+
+    /**
+     * Sets allow null
+     * @param bool $allowNull
+     * @return EntityToPropertyValueTransformer
+     */
+    public function setAllowNull(bool $allowNull = true): self
+    {
+        $this->allowNull = $allowNull;
+        return $this;
     }
 
     /**
@@ -128,12 +180,21 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
      */
     protected function convertStringToEntity($value)
     {
-        $result = $this->getRepository()->findBy([$this->entityProperty => $value]);
+        $builder = $this->getRepository()->createQueryBuilder('a');
+        $builder
+            ->select('a.'.$this->entityIdProperty)
+            ->where($builder->expr()->eq('a.'.$this->entityProperty, ':value'))
+            ->setParameter('value', $value)
+        ;
+        $rows = $builder->getQuery()->getScalarResult();
+        $result = null;
+        if (is_array($rows) && isset($rows[0][$this->entityIdProperty])) {
+            $result = $this->registry->getManagerForClass($this->entityClass)->getReference($this->entityClass, $rows[0][$this->entityIdProperty]);
+        }
+
         $entity = null;
         if ($result instanceof $this->entityClass) {
             $entity = $result;
-        } else if (count($result) > 0) {
-            $entity = array_shift($result);
         }
         if (!$entity && $this->createEntityIfNotExists) {
             $entity = $this->createNewEntity($value);

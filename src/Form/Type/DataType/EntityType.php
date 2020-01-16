@@ -41,7 +41,8 @@ class EntityType extends AbstractType
             'required' => false,
             'entity_class' => null,
             'entity_property' => 'title',
-            'create_entity_if_not_exists' => true,
+            'entity_id_property' => 'id',
+            'create_entity_if_not_exists' => false,
             'compound' => false,
             'multiple' => false,
             'multiple_data_type' => EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION,
@@ -61,7 +62,13 @@ class EntityType extends AbstractType
             ->resetModelTransformers()
             ->resetViewTransformers()
         ;
-        $builder->addViewTransformer(new EntityToPropertyValueTransformer($this->registry, $options['entity_class'], $options['entity_property'], $options['multiple'], $options['multiple_data_type'], !$options['required'], $options['create_entity_if_not_exists']));
+        $builder->addViewTransformer((new EntityToPropertyValueTransformer($this->registry, $options['entity_class'], $options['entity_property']))
+            ->setEntityIdProperty($options['entity_id_property'])
+            ->setMultiple($options['multiple'])
+            ->setMultipleDataType($options['multiple_data_type'])
+            ->setAllowNull(!$options['required'])
+            ->setCreateEntityIfNotExists($options['create_entity_if_not_exists'])
+        );
     }
 
     /**
