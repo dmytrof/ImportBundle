@@ -514,8 +514,6 @@ abstract class AbstractImporter implements ImporterInterface
         $this->getLogger()->info('Processing data: END', ['total_entries' => $itemsCount]);
 
         $butchLength = $this->getButchLength();
-        echo 'Butch length: ';
-        var_dump($butchLength);
 
         $this->getOutput()->section('Importing');
         $this->getLogger()->info('Importing: START');
