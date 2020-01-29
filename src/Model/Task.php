@@ -15,7 +15,7 @@ use Monolog\Logger;
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleModelTrait};
 use Dmytrof\ModelsManagementBundle\Model\{ActiveModelInterface, Traits\ActiveModelTrait};
 use Dmytrof\ImportBundle\Event\{PreImportTaskEvent, PostImportTaskEvent};
-use Dmytrof\ImportBundle\Exception\{ImporterException, ReaderException};
+use Dmytrof\ImportBundle\Exception\{ImporterException, ReaderException, TaskException};
 use Dmytrof\ImportBundle\Importer\{ImporterInterface, Options\ImporterOptionsInterface};
 use Dmytrof\ImportBundle\Manager\TaskManager;
 use Dmytrof\ImportBundle\Reader\{Options\ReaderOptionsInterface, ReaderInterface};
@@ -924,13 +924,31 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     }
 
     /**
-     * Returns data from link
-     * @param bool $exampleData
+     * Returns prepared link
+     * @param int $page
      * @return ImportedData
      */
-    public function getDataFromLink(bool $exampleData = false): ImportedData
+    public function getPreparedLink(int $page = 1): string
     {
-        return $this->getReader()->getDataFromLink($this->getLink(), ['exampleData' => $exampleData]);
+        $link = $this->getLink();
+        if ($this->isPaginatedLink()) {
+            $link = str_replace($this->getPageParameterInLink(), $page, $link);
+            if ($link === $this->getLink()) { // link is without page parameter
+                throw new TaskException(sprintf('Paginated link has no page parameter "%s"', $this->getPageParameterInLink()));
+            }
+        }
+        return $link;
+    }
+
+    /**
+     * Returns data from link
+     * @param bool $exampleData
+     * @param string|null $link
+     * @return ImportedData
+     */
+    public function getDataFromLink(bool $exampleData = false, string $link = null): ImportedData
+    {
+        return $this->getReader()->getDataFromLink($link ?? $this->getLink(), ['exampleData' => $exampleData]);
     }
 
     /**

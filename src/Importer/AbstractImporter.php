@@ -453,15 +453,23 @@ abstract class AbstractImporter implements ImporterInterface
      */
     public function importTask(Task $task): ImporterInterface
     {
-        $this->getOutput()->section('Reading data from resource');
-        $this->getLogger()->info('Reading data from resource: START');
+        $page = 0;
+        do {
+            $page++;
+            $link = $task->getPreparedLink($page);
+            $this->getOutput()->section(sprintf('Reading data from resource %s', $task->isPaginatedLink() ? $page : ''));
+            $this->getLogger()->info(sprintf('Reading data from resource %s: START', $link));
 
-        $data = $task->getDataFromLink();
+            $data = $task->getDataFromLink(false, $link);
 
-        $this->getOutput()->text('Done');
-        $this->getLogger()->info('Reading data from resource: END');
+            $this->getOutput()->text('Done');
+            $this->getLogger()->info(sprintf('Reading data from resource %s: END', $link));
 
-        $this->importData($data);
+            if ($task->isPaginatedLink() && empty($data->getExampleData())) {
+                break;
+            }
+            $this->importData($data);
+        } while ($task->isPaginatedLink() && $this->getImportStatistics()->getAll());
 
         return $this;
     }
