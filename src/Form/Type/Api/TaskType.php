@@ -13,7 +13,7 @@ namespace Dmytrof\ImportBundle\Form\Type\Api;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
-use Symfony\Component\Form\Extension\Core\Type\{IntegerType, TextareaType, TextType};
+use Symfony\Component\Form\Extension\Core\Type\{CheckboxType, IntegerType, TextareaType, TextType};
 use Dmytrof\ImportBundle\Form\Type\{ImporterDefinitionType, ReaderDefinitionType};
 use Dmytrof\ImportBundle\Manager\TaskManager as Manager;
 
@@ -65,6 +65,18 @@ class TaskType extends AbstractType
             ->add('link', TextareaType::class, [
                 'required' => true,
                 'label' => 'label.import_task.link',
+            ])
+            ->add('paginatedLink', CheckboxType::class, [
+                'required' => false,
+                'label' => 'label.import_task.paginated_link',
+            ])
+            ->add('pageParameterInLink', TextType::class, [
+                'required' => false,
+                'label' => 'label.import_task.page_parameter_in_link',
+            ])
+            ->add('firstPageValue', TextType::class, [
+                'required' => false,
+                'label' => 'label.import_task.first_page_value',
             ])
             ->add('readerDefinition', ReaderDefinitionType::class, [
                 'label' => 'label.import_task.reader_definition.label',

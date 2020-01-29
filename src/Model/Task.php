@@ -32,6 +32,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
 
     public const VALIDATION_GROUP_LINK_AND_PARSER = 'LinkAndParser';
 
+    public const PAGE_PARAMETER_IN_LINK = '{page}';
+
     public const PERIOD_EVERY_HOUR      = 3600;
     public const PERIOD_EVERY_4_HOURS   = 14400;
     public const PERIOD_EVERY_8_HOURS   = 28800;
@@ -98,6 +100,21 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * @Assert\NotBlank(groups={Task::VALIDATION_GROUP_LINK_AND_PARSER})
      */
     protected $link;
+
+    /**
+     * @var bool
+     */
+    protected $paginatedLink;
+
+    /**
+     * @var string
+     */
+    protected $pageParameterInLink;
+
+    /**
+     * @var integer
+     */
+    protected $firstPageValue;
 
     /**
      * Period
@@ -202,6 +219,9 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     {
         $this->setInProgress(false);
         $this->setActive(true);
+        $this->setPaginatedLink(false);
+        $this->setPageParameterInLink(static::PAGE_PARAMETER_IN_LINK);
+        $this->setFirstPageValue(1);
     }
 
     public function __clone()
@@ -353,6 +373,65 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setLink(?string $link): self
     {
         $this->link = $link;
+        return $this;
+    }
+
+    /**
+     * Checks if link is paginated
+     * @return bool
+     */
+    public function isPaginatedLink(): bool
+    {
+        return (bool) $this->paginatedLink;
+    }
+
+    /**
+     * Sets link paginated
+     * @param bool|null $paginatedLink
+     * @return Task
+     */
+    public function setPaginatedLink(?bool $paginatedLink): self
+    {
+        $this->paginatedLink = (bool) $paginatedLink;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPageParameterInLink(): ?string
+    {
+        return $this->pageParameterInLink;
+    }
+
+    /**
+     * Sets page parameter in link
+     * @param string|null $pageParameterInLink
+     * @return Task
+     */
+    public function setPageParameterInLink(?string $pageParameterInLink): self
+    {
+        $this->pageParameterInLink = $pageParameterInLink;
+        return $this;
+    }
+
+    /**
+     * Returns first page value
+     * @return int
+     */
+    public function getFirstPageValue(): int
+    {
+        return $this->firstPageValue ?? 1;
+    }
+
+    /**
+     * Sets first page value
+     * @param int|null $firstPageValue
+     * @return Task
+     */
+    public function setFirstPageValue(?int $firstPageValue): Task
+    {
+        $this->firstPageValue = (int) $firstPageValue;
         return $this;
     }
 

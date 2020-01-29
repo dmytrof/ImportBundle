@@ -56,6 +56,21 @@ class Task extends Model
     protected $link;
 
     /**
+     * @ORM\Column(type="boolean", nullable=false, options={"default":false})
+     */
+    protected $paginatedLink;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $pageParameterInLink;
+
+    /**
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    protected $firstPageValue;
+
+    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     protected $period;
