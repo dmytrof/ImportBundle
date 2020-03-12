@@ -43,6 +43,7 @@ class EntityType extends AbstractType
             'entity_property' => 'title',
             'entity_id_property' => 'id',
             'create_entity_if_not_exists' => false,
+            'null_on_exception' => false,
             'compound' => false,
             'multiple' => false,
             'multiple_data_type' => EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION,
@@ -50,6 +51,7 @@ class EntityType extends AbstractType
 
         $resolver->setRequired('entity_class');
         $resolver->addAllowedTypes('multiple', ['bool']);
+        $resolver->addAllowedTypes('null_on_exception', ['bool']);
         $resolver->addAllowedValues('multiple_data_type', [EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_ARRAY, EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION]);
     }
 
@@ -67,6 +69,7 @@ class EntityType extends AbstractType
             ->setMultiple($options['multiple'])
             ->setMultipleDataType($options['multiple_data_type'])
             ->setAllowNull(!$options['required'])
+            ->setNullOnException($options['null_on_exception'])
             ->setCreateEntityIfNotExists($options['create_entity_if_not_exists'])
         );
     }

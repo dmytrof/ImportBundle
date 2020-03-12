@@ -64,6 +64,11 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected $allowNull = true;
 
     /**
+     * @var bool
+     */
+    protected $nullOnException = false;
+
+    /**
      * EntityToPropertyValueTransformer constructor.
      * @param ManagerRegistry $registry
      * @param string $entityClass
@@ -128,6 +133,17 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     public function setAllowNull(bool $allowNull = true): self
     {
         $this->allowNull = $allowNull;
+        return $this;
+    }
+
+    /**
+     * Sets null on exception
+     * @param bool $nullOnException
+     * @return EntityToPropertyValueTransformer
+     */
+    public function setNullOnException(bool $nullOnException = true): self
+    {
+        $this->nullOnException = $nullOnException;
         return $this;
     }
 
@@ -200,6 +216,9 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
             $entity = $this->createNewEntity($value);
         }
         if (!$entity instanceof $this->entityClass) {
+            if ($this->nullOnException) {
+                return null;
+            }
             throw new TransformationFailedException(sprintf('The entity with %s "%s" could not be found', $this->entityProperty, $value));
         }
         return $entity;
