@@ -359,6 +359,17 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     }
 
     /**
+     * Returns data value by key
+     * @param string $key
+     * @param null $defaultValue
+     * @return mixed|null
+     */
+    public function getDataValue(string $key, $defaultValue = null)
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : $defaultValue;
+    }
+
+    /**
      * Returns errors
      * @return array|null
      */

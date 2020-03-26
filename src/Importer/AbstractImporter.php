@@ -670,16 +670,18 @@ abstract class AbstractImporter implements ImporterInterface
         } catch (InvalidTargetException $e) {
             $object = null;
         }
-        $isNew = false;
-        if (!$object || !$object->getId()) {
-            $object = $this->findOrCreateObject($importedItem, $importFormData);
-            $isNew = !(bool) $object->getId();
-        }
-        if (!$isNew){
-            $importFormData->setMethodPatch();
-        }
-        $importedItem->setTarget($object);
+
         try {
+            $isNew = false;
+            if (!$object || !$object->getId()) {
+                $object = $this->findOrCreateObject($importedItem, $importFormData);
+                $isNew = !(bool) $object->getId();
+            }
+            if (!$isNew){
+                $importFormData->setMethodPatch();
+            }
+            $importedItem->setTarget($object);
+
             $this->beforeObjectUpdate($object, $importedItem, $importFormData);
 
             $form = clone $this->getForm(['method' => $importFormData->getMethod()]);
@@ -725,6 +727,9 @@ abstract class AbstractImporter implements ImporterInterface
                 ->setStatusId(Item::STATUS_ERROR)
                 ->setErrors([$e->getMessage()])
             ;
+            if (!$importedItem->getTarget() || !$importedItem->getTarget()->getClassName()) {
+                $importedItem->setTarget($this->getManager()->new());
+            }
         }
     }
 
