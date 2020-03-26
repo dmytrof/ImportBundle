@@ -83,11 +83,6 @@ abstract class AbstractImporter implements ImporterInterface
     protected $processedEntriesIds = [];
 
     /**
-     * @var FormInterface[]
-     */
-    protected $forms;
-
-    /**
      * {@inheritdoc}
      */
     public static function getCode(): string
@@ -634,7 +629,11 @@ abstract class AbstractImporter implements ImporterInterface
 
     public function configureGetFormOptions(OptionsResolver $resolver): OptionsResolver
     {
-        $resolver->setDefault('method', Request::METHOD_POST);
+        $resolver->setDefaults([
+            'method' => Request::METHOD_POST,
+            'model' => null,
+        ]);
+
         return $resolver;
     }
 
@@ -646,15 +645,12 @@ abstract class AbstractImporter implements ImporterInterface
     public function getForm(array $options = []): FormInterface
     {
         $options = $this->configureGetFormOptions(new OptionsResolver())->resolve($options);
-        $hash = sha1(json_encode($options));
-        if (!isset($this->forms[$hash])) {
-            $this->forms[$hash] = $this->getManager()->getCreateModelForm([
-                'formClass' => $this->getImporterFormClass(),
-                'requestMethod' => $options['method'],
-            ]);
-        }
 
-        return $this->forms[$hash];
+        return $this->getManager()->getCreateModelForm([
+            'formClass' => $this->getImporterFormClass(),
+            'requestMethod' => $options['method'],
+            'model' => $options['model'],
+        ]);
     }
 
     /**
@@ -684,12 +680,12 @@ abstract class AbstractImporter implements ImporterInterface
 
             $this->beforeObjectUpdate($object, $importedItem, $importFormData);
 
-            $form = clone $this->getForm(['method' => $importFormData->getMethod()]);
-            $form->setData($object);
+            $form = $this->getForm(['model' => $object]);
             $this->getManager()
                 ->processModelForm($form, [
                     'directSubmit' => true,
                     'data' => $importFormData->getData(),
+                    'directSubmitClearMissing' => !$importFormData->isMethodPatch(),
                 ])
                 ->checkModelForm($form)
                 ->save($object, [
