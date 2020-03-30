@@ -18,6 +18,7 @@ use Dmytrof\ImportBundle\{Model\Item as Model, Entity\Item\Repository};
 /**
  * @ORM\Table(name="dmytrof_import_item", indexes={
  *     @ORM\Index(name="dmytrof_import_item_status_id", columns={"status_id", "task_id"}),
+ *     @ORM\Index(name="dmytrof_import_item_entry_id", columns={"task_id", "entry_id"}),
  * })
  * @ORM\Entity(repositoryClass=Repository::class)
  */
