@@ -602,6 +602,23 @@ abstract class AbstractImporter implements ImporterInterface
     }
 
     /**
+     * Checks if import of item needed
+     * @param Item $importedItem
+     * @param array $item
+     * @return bool
+     */
+    protected function isProcessOfImportItemNeeded(Item $importedItem, array $item): bool
+    {
+        return $this->getTask()->isForceImport()
+            || $importedItem->isForceImport()
+            || $importedItem->getDataHash() !== $importedItem->generateDataHash($item)
+            || $importedItem->getConfigHash() !== $this->getOptionsHash()
+            || !$importedItem->getTarget()->getModel()
+            || !$importedItem->getTarget()->getModel()->getId()
+        ;
+    }
+
+    /**
      * Imports data for one object
      * @param string $itemId
      * @param array $item
@@ -609,7 +626,7 @@ abstract class AbstractImporter implements ImporterInterface
     public function importEntryItem(string $itemId, array $item): void
     {
         $importedItem = $this->getImportedItem($itemId, $item);
-        if ($this->getTask()->isForceImport() || $importedItem->isForceImport() || $importedItem->getDataHash() !== $importedItem->generateDataHash($item) || $importedItem->getConfigHash() !== $this->getOptionsHash()) {
+        if ($this->isProcessOfImportItemNeeded($importedItem, $item)) {
             $importedItem
                 ->setData($item)
                 ->setConfigHash($this->getOptionsHash())
