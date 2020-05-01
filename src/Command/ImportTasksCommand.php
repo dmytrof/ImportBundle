@@ -49,6 +49,7 @@ class ImportTasksCommand extends Command
 			->addOption('task', 't', InputOption::VALUE_OPTIONAL, 'Import task id.', null)
             ->addOption('scheduled', 's', InputOption::VALUE_OPTIONAL, 'All scheduled tasks', true)
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
+            ->addOption('throw-exceptions', null, InputOption::VALUE_NONE, 'Throw exceptions')
 		;
 	}
 
@@ -108,6 +109,9 @@ class ImportTasksCommand extends Command
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
             $io->error(sprintf('Import task "%s" error: %s', $taskId, $e->getMessage()));
+            if ($input->getOption('throw-exceptions')) {
+                throw $e;
+            }
         }
     }
 }

@@ -23,7 +23,10 @@ use Dmytrof\ModelsManagementBundle\Exception\{FormErrorsException, InvalidTarget
 use Dmytrof\ModelsManagementBundle\{Manager\AbstractDoctrineManager,
     Manager\AbstractManager,
     Model\SimpleModelInterface};
-use Dmytrof\ImportBundle\{Exception\ImporterException, Manager\ItemManager, Form\Type\Importer\ImporterOptionsType};
+use Dmytrof\ImportBundle\{Exception\ImporterException,
+    Exception\SkippedItemException,
+    Manager\ItemManager,
+    Form\Type\Importer\ImporterOptionsType};
 use Dmytrof\ImportBundle\Importer\Options\{ImporterOptions, ImporterOptionsInterface};
 use Dmytrof\ImportBundle\Model\{ImportableField, ImportableFields, ImportableFieldsOptions, ImportedData, ImportFormData, ImportStatistics, Item, Task};
 
@@ -725,6 +728,12 @@ abstract class AbstractImporter implements ImporterInterface
                 $this->getImportStatistics()->incrementUpdated();
                 $this->logImportItemResult('info', 'UPDATED', $object, $importFormData);
             }
+        } catch (SkippedItemException $e) {
+            $this->getImportStatistics()->incrementSkipped();
+            $this->logImportItemResult('info', 'SKIPPED: '.$e->getMessage(), $object, $importFormData);
+            $importedItem
+                ->setStatusId(Item::STATUS_SKIPPED)
+            ;
         } catch (FormErrorsException $e) {
             $this->getImportStatistics()->incrementErrors();
             $errors = $e->getFormErrors();

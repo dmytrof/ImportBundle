@@ -52,6 +52,7 @@ class ImportItemsCommand extends Command
             ->addOption('task', 't', InputOption::VALUE_OPTIONAL, 'Import task id')
             ->addOption('period', 'p', InputOption::VALUE_OPTIONAL, 'Period in seconds to execute commend')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
+            ->addOption('throw-exceptions', null, InputOption::VALUE_NONE, 'Throw exceptions')
 		;
 	}
 
@@ -133,10 +134,13 @@ class ImportItemsCommand extends Command
     protected function importItem(string $itemId, OutputInterface $output, InputInterface $input)
     {
         try {
-            $this->getItemManager()->importItem($itemId, $input->hasOption('force'), $output, $input);
+            $this->getItemManager()->importItem($itemId, $input->getOption('force'), $output, $input);
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
             $io->error('Import item '.$itemId.' error: '.$e->getMessage());
+            if ($input->getOption('throw-exceptions')) {
+                throw $e;
+            }
         }
     }
 }
