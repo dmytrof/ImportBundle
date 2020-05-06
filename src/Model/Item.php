@@ -24,9 +24,7 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
 {
     use TargetedModelTrait,
         SimpleModelTrait,
-        ActiveModelTrait {
-        SimpleModelTrait::isNew as private _isNew;
-    }
+        ActiveModelTrait;
 
     public const STATUS_SKIPPED     = 1;
     public const STATUS_CREATED     = 2;
@@ -36,7 +34,6 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     public const STATUS_SCHEDULED   = 6;
     public const STATUS_DUPLICATE   = 7;
     public const STATUS_DATA_ERROR  = 8;
-
 
     const STATUSES = [
         self::STATUS_SKIPPED    => 'label.import_item.statuses.skipped',
@@ -231,7 +228,7 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
      */
     public function getTaskTitle(): ?string
     {
-        return $this->getTask() ? $this->getTask()->getTitleOfModel() : null;
+        return $this->getTask() ? $this->getTask()->getModelTitle() : null;
     }
 
     /**
@@ -424,7 +421,7 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
      */
     public function isNew(): bool
     {
-        return $this->_isNew() || !$this->getDataHash();
+        return $this->isModelNew() || !$this->getDataHash();
     }
 
     /**
@@ -437,8 +434,8 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     public function importScheduledData(ItemManager $manager, ?SymfonyStyle $io = null, ?Logger $logger = null): self
     {
         try {
-            $io->title($this->getTitleOfModel());
-            $logger->info('IMPORTING: '.$this->getTitleOfModel());
+            $io->title($this->getModelTitle());
+            $logger->info('IMPORTING: '.$this->getModelTitle());
 
             $importer = $this->getTask()->getImporter();
             $importer

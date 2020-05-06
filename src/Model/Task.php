@@ -311,7 +311,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * @inheritDoc
      */
-    public function getTitleOfModel(): string
+    public function getModelTitle(): string
     {
         return $this->getTitle().' (ID: '.$this->getId().')';
     }
@@ -882,8 +882,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function importData(TaskManager $manager, ?SymfonyStyle $io = null, ?Logger $logger = null): self
     {
         try {
-            $io->title($this->getTitleOfModel());
-            $logger->info('IMPORTING: '.$this->getTitleOfModel());
+            $io->title($this->getModelTitle());
+            $logger->info('IMPORTING: '.$this->getModelTitle());
             $this
                 ->setInProgress(true)
                 ->setImportedAt(new \DateTime())
