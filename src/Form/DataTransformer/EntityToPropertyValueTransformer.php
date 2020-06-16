@@ -69,6 +69,11 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected $nullOnException = false;
 
     /**
+     * @var \Closure
+     */
+    protected $queryBuilderDecorator;
+
+    /**
      * EntityToPropertyValueTransformer constructor.
      * @param ManagerRegistry $registry
      * @param string $entityClass
@@ -148,6 +153,17 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     }
 
     /**
+     * Sets query builder decorator
+     * @param \Closure|null $queryBuilderDecorator
+     * @return $this
+     */
+    public function setQueryBuilderDecorator(?\Closure $queryBuilderDecorator): self
+    {
+        $this->queryBuilderDecorator = $queryBuilderDecorator;
+        return $this;
+    }
+
+    /**
      * Returns repository
      * @return EntityRepository
      */
@@ -202,6 +218,9 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
             ->where($builder->expr()->eq('a.'.$this->entityProperty, ':value'))
             ->setParameter('value', $value)
         ;
+        if ($this->queryBuilderDecorator instanceof \Closure) {
+            $this->queryBuilderDecorator->call($this, $builder, $value);
+        }
         $rows = $builder->getQuery()->getScalarResult();
         $result = null;
         if (is_array($rows) && isset($rows[0][$this->entityIdProperty])) {

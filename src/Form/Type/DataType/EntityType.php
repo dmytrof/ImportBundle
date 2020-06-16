@@ -47,12 +47,14 @@ class EntityType extends AbstractType
             'compound' => false,
             'multiple' => false,
             'multiple_data_type' => EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION,
+            'query_builder_decorator' => null,
         ]);
 
         $resolver->setRequired('entity_class');
         $resolver->addAllowedTypes('multiple', ['bool']);
         $resolver->addAllowedTypes('null_on_exception', ['bool']);
         $resolver->addAllowedValues('multiple_data_type', [EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_ARRAY, EntityToPropertyValueTransformer::MULTIPLE_DATA_TYPE_COLLECTION]);
+        $resolver->addAllowedTypes('query_builder_decorator', ['null', \Closure::class]);
     }
 
     /**
@@ -71,6 +73,7 @@ class EntityType extends AbstractType
             ->setAllowNull(!$options['required'])
             ->setNullOnException($options['null_on_exception'])
             ->setCreateEntityIfNotExists($options['create_entity_if_not_exists'])
+            ->setQueryBuilderDecorator($options['query_builder_decorator'])
         );
     }
 
