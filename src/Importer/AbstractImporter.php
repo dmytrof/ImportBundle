@@ -37,6 +37,7 @@ abstract class AbstractImporter implements ImporterInterface
     public const OPTIONS_CLASS = ImporterOptions::class;
     public const OPTIONS_FORM_CLASS = ImporterOptionsType::class;
     public const IMPORTER_FORM_CLASS = null;
+    public const IMPORTER_FORM_OPTIONS = [];
     public const COMPOUND_FIELD_NAME_DELIMITER = '.';
     public const BUTCH_LENGTH = 10;
 
@@ -115,6 +116,14 @@ abstract class AbstractImporter implements ImporterInterface
     public static function getImporterFormClass(): ?string
     {
         return static::IMPORTER_FORM_CLASS;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getImporterFormOptions(): array
+    {
+        return static::IMPORTER_FORM_OPTIONS;
     }
 
     /**
@@ -320,7 +329,7 @@ abstract class AbstractImporter implements ImporterInterface
     public function getImportableFields(): ImportableFields
     {
         $fields = new ImportableFields();
-        $form = $this->getManager()->getFormFactory()->create($this->getImporterFormClass() ?: $this->getManager()->getCreateModelFormType());
+        $form = $this->getManager()->getFormFactory()->create($this->getImporterFormClass() ?: $this->getManager()->getCreateModelFormType(), null, $this->getImporterFormOptions());
         $this->addImportableFields($fields, $form);
         return $fields;
     }
@@ -668,6 +677,7 @@ abstract class AbstractImporter implements ImporterInterface
 
         return $this->getManager()->getCreateModelForm([
             'formClass' => $this->getImporterFormClass(),
+            'formOptions' => $this->getImporterFormOptions(),
             'requestMethod' => $options['method'],
             'model' => $options['model'],
         ]);
