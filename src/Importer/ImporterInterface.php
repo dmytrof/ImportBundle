@@ -44,6 +44,12 @@ interface ImporterInterface
     public static function getImporterFormClass(): ?string;
 
     /**
+     * Returns form options for importer
+     * @return array
+     */
+    public function getImporterFormOptions(): array;
+
+    /**
      * Returns title of importer
      * @return string
      */

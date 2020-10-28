@@ -121,7 +121,7 @@ abstract class AbstractImporter implements ImporterInterface
     /**
      * {@inheritdoc}
      */
-    public static function getImporterFormOptions(): array
+    public function getImporterFormOptions(): array
     {
         return static::IMPORTER_FORM_OPTIONS;
     }
