@@ -370,12 +370,13 @@ abstract class AbstractImporter implements ImporterInterface
 
     /**
      * Adds entry id to processed
-     * @param $entryId
-     * @return AbstractImporter
+     * @param string $entryId
+     * @param string $itemId
+     * @return $this
      */
-    protected function addProcessedEntryId($entryId): self
+    protected function addProcessedEntryId(string $entryId, string $itemId): self
     {
-        array_push($this->processedEntriesIds, $entryId);
+        $this->processedEntriesIds[$entryId] = $itemId;
         return $this;
     }
 
@@ -386,7 +387,17 @@ abstract class AbstractImporter implements ImporterInterface
      */
     protected function isDuplicatedEntryId($entryId): bool
     {
-        return in_array($entryId, $this->processedEntriesIds);
+        return isset($this->processedEntriesIds[$entryId]);
+    }
+
+    /**
+     * Checks if item id is duplicated
+     * @param string $itemId
+     * @return bool
+     */
+    protected function isDuplicatedItemId(string $itemId): bool
+    {
+        return in_array($itemId, $this->processedEntriesIds);
     }
 
     /**
@@ -564,7 +575,7 @@ abstract class AbstractImporter implements ImporterInterface
                     $this->getImportStatistics()->incrementErrors();
                 }
             }
-            $this->addProcessedEntryId($entryId);
+
             if ($progressBar->getProgress() % $butchLength == 0 && $this->getManager() instanceof AbstractDoctrineManager) {
                 $this->getManager()->getManager()->flush();
                 $this->getManager()->getManager()->clear();
@@ -632,12 +643,12 @@ abstract class AbstractImporter implements ImporterInterface
 
     /**
      * Imports data for one object
-     * @param string $itemId
+     * @param string $entryId
      * @param array $item
      */
-    public function importEntryItem(string $itemId, array $item): void
+    public function importEntryItem(string $entryId, array $item): void
     {
-        $importedItem = $this->getImportedItem($itemId, $item);
+        $importedItem = $this->getImportedItem($entryId, $item);
         if ($this->isProcessOfImportItemNeeded($importedItem, $item)) {
             $importedItem
                 ->setData($item)
@@ -653,6 +664,7 @@ abstract class AbstractImporter implements ImporterInterface
             $this->getImportStatistics()->incrementSkipped();
             $this->logImportItemResult('info', 'SKIPPED', $importedItem->getTarget()->getModel(), $this->getImportFormData($importedItem));
         }
+        $this->addProcessedEntryId($entryId, $importedItem->getId());
         unset($importedItem);
     }
 
@@ -767,14 +779,15 @@ abstract class AbstractImporter implements ImporterInterface
 
     /**
      * Imports data for one object
-     * @param string $itemId
+     * @param string $entryId
      * @param array $item
      */
-    public function importDuplicatedEntryItem(string $itemId, array $item): void
+    public function importDuplicatedEntryItem(string $entryId, array $item): void
     {
-        if (!$this->getItemManager()->get($this->generateItemId($itemId, $item)))
+        $itemId = $this->generateItemId($entryId, $item);
+        if (!$this->isDuplicatedItemId($itemId) && !$this->getItemManager()->get($itemId))
         {
-            $importedItem = $this->getNewImportedItem($itemId, $item);
+            $importedItem = $this->getNewImportedItem($entryId, $item);
             $importedItem
                 ->setStatusId(Item::STATUS_DUPLICATE)
                 ->setConfigHash($this->getOptionsHash())
