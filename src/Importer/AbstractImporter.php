@@ -34,6 +34,7 @@ abstract class AbstractImporter implements ImporterInterface
 {
     public const CODE = null;
     public const TITLE = null;
+    public const TRANSLATIONS_DOMAIN = null;
     public const OPTIONS_CLASS = ImporterOptions::class;
     public const OPTIONS_FORM_CLASS = ImporterOptionsType::class;
     public const IMPORTER_FORM_CLASS = null;
@@ -127,6 +128,15 @@ abstract class AbstractImporter implements ImporterInterface
     }
 
     /**
+     * Returns translations domain
+     * @return string|null
+     */
+    public function getTranslationsDomain(): ?string
+    {
+        return static::TRANSLATIONS_DOMAIN;
+    }
+
+    /**
      * Returns butch length
      * @return int
      */
@@ -196,11 +206,22 @@ abstract class AbstractImporter implements ImporterInterface
     }
 
     /**
+     * Translates message
+     * @param string $message
+     * @param array $parameters
+     * @return string
+     */
+    protected function translate(string $message, array $parameters = [])
+    {
+        return $this->getTranslator()->trans($message, $parameters, $this->getTranslationsDomain());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getTitle(): string
     {
-        return $this->getTranslator()->trans(static::TITLE ?: 'untitled');
+        return $this->translate(static::TITLE ?: 'untitled');
     }
 
     /**
