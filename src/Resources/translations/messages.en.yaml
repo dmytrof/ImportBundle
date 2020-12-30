@@ -1,0 +1,10 @@
+dmytrof:
+    reader:
+        json:
+            label: JSON
+        xml:
+            label: XML
+        rss:
+            label: RSS
+        csv:
+            label: CSV

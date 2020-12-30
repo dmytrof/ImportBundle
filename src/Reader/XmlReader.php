@@ -17,7 +17,7 @@ use Laminas\Xml2Json\{Xml2Json, Exception\RuntimeException};
 class XmlReader extends AbstractReader
 {
     public const CODE = 'xml';
-    public const TITLE = 'label.import_reader.xml';
+    public const TITLE = 'dmytrof.reader.xml.label';
     public const OPTIONS_CLASS = null;
     public const OPTIONS_FORM_CLASS = null;
 

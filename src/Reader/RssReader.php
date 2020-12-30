@@ -18,7 +18,7 @@ use Laminas\Feed\Reader\{Reader, Entry\EntryInterface};
 class RssReader extends AbstractReader
 {
     public const CODE = 'rss';
-    public const TITLE = 'label.import_reader.rss';
+    public const TITLE = 'dmytrof.reader.rss.label';
     public const OPTIONS_CLASS = null;
     public const OPTIONS_FORM_CLASS = null;
     public const DATA_IN_ROOT = true;

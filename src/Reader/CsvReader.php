@@ -21,7 +21,7 @@ use Dmytrof\ImportBundle\Form\Type\Reader\CsvReaderOptionsType;
 class CsvReader extends AbstractReader
 {
     public const CODE = 'csv';
-    public const TITLE = 'label.import_reader.csv';
+    public const TITLE = 'dmytrof.reader.csv.label';
     public const OPTIONS_CLASS = CsvReaderOptions::class;
     public const OPTIONS_FORM_CLASS = CsvReaderOptionsType::class;
     public const DATA_IN_ROOT = true;

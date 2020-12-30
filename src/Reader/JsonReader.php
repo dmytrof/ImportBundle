@@ -16,7 +16,7 @@ use Dmytrof\ImportBundle\Model\ImportedData;
 class JsonReader extends AbstractReader
 {
     public const CODE = 'json';
-    public const TITLE = 'label.import_reader.json';
+    public const TITLE = 'dmytrof.reader.json.label';
     public const OPTIONS_CLASS = null;
     public const OPTIONS_FORM_CLASS = null;
 
