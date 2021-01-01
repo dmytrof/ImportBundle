@@ -50,6 +50,7 @@ class ImportTasksCommand extends Command
             ->addOption('scheduled', 's', InputOption::VALUE_OPTIONAL, 'All scheduled tasks', true)
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
             ->addOption('throw-exceptions', null, InputOption::VALUE_NONE, 'Throw exceptions')
+            ->addOption('page', 'p', InputOption::VALUE_OPTIONAL, 'Page to import')
 		;
 	}
 
@@ -105,7 +106,14 @@ class ImportTasksCommand extends Command
     protected function importTask(int $taskId, OutputInterface $output, InputInterface $input)
     {
         try {
-            $this->getTaskManager()->importTask($taskId, $input->getOption('force'), $output, $input);
+            $options = [];
+            if ($input->getOption('force')) {
+                $options['force'] = $input->getOption('force');
+            }
+            if ($input->getOption('page')) {
+                $options['page'] = $input->getOption('page');
+            }
+            $this->getTaskManager()->importTask($taskId, $output, $input, $options);
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
             $io->error(sprintf('Import task "%s" error: %s', $taskId, $e->getMessage()));

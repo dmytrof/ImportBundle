@@ -490,25 +490,46 @@ abstract class AbstractImporter implements ImporterInterface
     /**
      * {@inheritdoc}
      */
-    public function importTask(Task $task): ImporterInterface
+    public function importTask(Task $task, array $options = []): ImporterInterface
     {
-        $page = 0;
-        do {
-            $page++;
-            $link = $task->getPreparedLink($page);
-            $this->getOutput()->section(sprintf('Reading data from resource %s', $task->isPaginatedLink() ? $page : ''));
-            $this->getLogger()->info(sprintf('Reading data from resource %s: START', $link));
-
-            $data = $task->getDataFromLink(false, $link);
-
-            $this->getOutput()->text('Done');
-            $this->getLogger()->info(sprintf('Reading data from resource %s: END', $link));
-
-            if ($task->isPaginatedLink() && empty($data->getExampleData())) {
-                break;
+        if (isset($options['page'])) {
+            $predefinedPages = explode(',', (string) $options['page']);
+            foreach ($predefinedPages as $page) {
+                $this->importTaskPage($task, $page, $options);
             }
-            $this->importData($data);
-        } while ($task->isPaginatedLink() && $this->getImportStatistics()->getAll());
+        } else {
+            $page = $task->getFirstPageValue();
+            do {
+                $this->importTaskPage($task, $page, $options);
+                $page++;
+            } while ($task->isPaginatedLink() && $this->getImportStatistics()->getAll());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Imports data for one page
+     * @param $task
+     * @param int $page
+     * @param array $options
+     * @return $this
+     */
+    protected function importTaskPage($task, int $page, array $options = []): self
+    {
+        $link = $task->getPreparedLink($page);
+        $this->getOutput()->section(sprintf('Reading data from resource %s', $task->isPaginatedLink() ? $page : ''));
+        $this->getLogger()->info(sprintf('Reading data from resource %s: START', $link));
+
+        $data = $task->getDataFromLink(false, $link);
+
+        $this->getOutput()->text('Done');
+        $this->getLogger()->info(sprintf('Reading data from resource %s: END', $link));
+
+        if ($task->isPaginatedLink() && empty($data->getExampleData())) {
+            return $this;
+        }
+        $this->importData($data);
 
         return $this;
     }

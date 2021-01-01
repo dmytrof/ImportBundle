@@ -148,9 +148,10 @@ interface ImporterInterface
     /**
      * Imports data from task
      * @param Task $task
-     * @return ImporterInterface
+     * @param array $options
+     * @return $this
      */
-    public function importTask(Task $task): self;
+    public function importTask(Task $task, array $options = []): self;
 
     /**
      * Imports data from item

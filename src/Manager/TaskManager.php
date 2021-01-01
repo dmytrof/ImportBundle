@@ -82,17 +82,17 @@ class TaskManager extends AbstractDoctrineManager
     /**
      * Imports task data
      * @param int $taskId
-     * @param bool $force
      * @param OutputInterface|null $output
      * @param InputInterface|null $input
+     * @param array $options
      */
-    public function importTask(int $taskId, bool $force = false, OutputInterface $output = null, InputInterface $input = null): void
+    public function importTask(int $taskId, OutputInterface $output = null, InputInterface $input = null, array $options = []): void
     {
         $task = $this->getTask($taskId);
         $io = new SymfonyStyle($input, $output);
         $task
-            ->setForceImport($force)
-            ->importData($this, $io, $this->getLogger())
+            ->setForceImport($options['force'] ?? false)
+            ->importData($this, $io, $this->getLogger(), $options)
         ;
     }
 

@@ -875,11 +875,12 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Imports data from resource
      * @param TaskManager $manager
-     * @param null|SymfonyStyle $io
+     * @param SymfonyStyle|null $io
      * @param Logger|null $logger
-     * @return Task
+     * @param array $options
+     * @return $this
      */
-    public function importData(TaskManager $manager, ?SymfonyStyle $io = null, ?Logger $logger = null): self
+    public function importData(TaskManager $manager, ?SymfonyStyle $io = null, ?Logger $logger = null, array $options = []): self
     {
         try {
             $io->title($this->getModelTitle());
@@ -895,7 +896,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
             $importer
                 ->setOutput($io)
                 ->setLogger($logger)
-                ->importTask($this);
+                ->importTask($this, $options);
 
             $importer->getLogger()->info('Importing finished!');
             $importer->getOutput()->success('Importing finished!');
