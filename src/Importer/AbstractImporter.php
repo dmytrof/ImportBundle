@@ -500,9 +500,9 @@ abstract class AbstractImporter implements ImporterInterface
         } else {
             $page = $task->getFirstPageValue();
             do {
-                $this->importTaskPage($task, $page, $options);
+                $result = $this->importTaskPage($task, $page, $options);
                 $page++;
-            } while ($task->isPaginatedLink() && $this->getImportStatistics()->getAll());
+            } while ($task->isPaginatedLink() && $result);
         }
 
         return $this;
@@ -513,9 +513,9 @@ abstract class AbstractImporter implements ImporterInterface
      * @param $task
      * @param int $page
      * @param array $options
-     * @return $this
+     * @return bool
      */
-    protected function importTaskPage($task, int $page, array $options = []): self
+    protected function importTaskPage($task, int $page, array $options = []): bool
     {
         $link = $task->getPreparedLink($page);
         $this->getOutput()->section(sprintf('Reading data from resource %s', $task->isPaginatedLink() ? $page : ''));
@@ -527,11 +527,11 @@ abstract class AbstractImporter implements ImporterInterface
         $this->getLogger()->info(sprintf('Reading data from resource %s: END', $link));
 
         if ($task->isPaginatedLink() && empty($data->getExampleData())) {
-            return $this;
+            return false;
         }
         $this->importData($data);
 
-        return $this;
+        return true;
     }
 
     /**
