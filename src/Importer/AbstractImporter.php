@@ -756,7 +756,7 @@ abstract class AbstractImporter implements ImporterInterface
     protected function checkObjectExistence(SimpleModelInterface $object): bool
     {
         if (!$object->isModelNew() && $this->getOptions()->isSkipExisted()) {
-            throw new SkippedItemException(sprintf('Skip updating of %s with ID: %s', $object->getModelTitle(), $object->getId()));
+            throw new SkippedItemException(sprintf('Skip updating of %s with ID: %s', $object->getClassName(), $object->getId()));
         }
 
         return true;
