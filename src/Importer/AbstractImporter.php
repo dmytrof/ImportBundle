@@ -749,6 +749,20 @@ abstract class AbstractImporter implements ImporterInterface
     }
 
     /**
+     * Checks object existence
+     * @param SimpleModelInterface $object
+     * @return bool
+     */
+    protected function checkObjectExistence(SimpleModelInterface $object): bool
+    {
+        if (!$object->isModelNew() && $this->getOptions()->isSkipExisted()) {
+            throw new SkippedItemException(sprintf('Skip updating of %s with ID: %s', $object->getModelTitle(), $object->getId()));
+        }
+
+        return true;
+    }
+
+    /**
      * Imports data from Item
      * @param Item $importedItem
      * @param bool $flush
@@ -773,6 +787,7 @@ abstract class AbstractImporter implements ImporterInterface
             }
             $importedItem->setTarget($object);
 
+            $this->checkObjectExistence($object);
             $this->beforeObjectUpdate($object, $importedItem, $importFormData);
 
             $form = $this->getForm(['model' => $object]);
