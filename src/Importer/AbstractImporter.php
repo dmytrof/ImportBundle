@@ -787,8 +787,8 @@ abstract class AbstractImporter implements ImporterInterface
             }
             $importedItem->setTarget($object);
 
-            $this->checkObjectExistence($object);
             $this->beforeObjectUpdate($object, $importedItem, $importFormData);
+            $this->checkObjectExistence($object);
 
             $form = $this->getForm(['model' => $object]);
             $this->getManager()
