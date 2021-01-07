@@ -52,4 +52,22 @@ interface ImporterOptionsInterface extends \SplSubject, ArrayConvertibleModelInt
      * @return ImporterOptionsInterface
      */
     public function prepareImportableFieldsOptions(ImportableFields $importableFields): self;
+
+    /**
+     * Checks if force
+     * @return bool
+     */
+    public function isForce(): bool;
+
+    /**
+     * Checks if sync data needed
+     * @return bool
+     */
+    public function isSyncData(): bool;
+
+    /**
+     * Checks if skipping of existed rows needed
+     * @return bool
+     */
+    public function isSkipExisted(): bool;
 }

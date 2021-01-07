@@ -134,7 +134,7 @@ class ImportItemsCommand extends Command
     protected function importItem(string $itemId, OutputInterface $output, InputInterface $input)
     {
         try {
-            $this->getItemManager()->importItem($itemId, $input->getOption('force'), $output, $input);
+            $this->getItemManager()->importItem($itemId, $output, $input);
         } catch (\Exception $e) {
             $io = new SymfonyStyle($input, $output);
             $io->error('Import item '.$itemId.' error: '.$e->getMessage());

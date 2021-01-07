@@ -81,11 +81,6 @@ class Task extends Model
     protected $inProgress;
 
     /**
-     * @ORM\Column(name="import_statistics", type="json", nullable=true)
-     */
-    protected $importStatisticsArr;
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $importedAt;

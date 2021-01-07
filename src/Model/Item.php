@@ -509,24 +509,4 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
         $this->setData($data);
         return $this;
     }
-
-    /**
-     * Checks force import
-     * @return bool
-     */
-    public function isForceImport(): bool
-    {
-        return (bool) $this->forceImport;
-    }
-
-    /**
-     * Sets force import
-     * @param bool|null $forceImport
-     * @return $this
-     */
-    public function setForceImport(?bool $forceImport = true): self
-    {
-        $this->forceImport = (bool) $forceImport;
-        return $this;
-    }
 }

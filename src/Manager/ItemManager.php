@@ -99,16 +99,14 @@ class ItemManager extends AbstractDoctrineManager
     /**
      * Imports item data
      * @param string $itemId
-     * @param bool $force
      * @param OutputInterface|null $output
      * @param InputInterface|null $input
      */
-    public function importItem(string $itemId, bool $force = false, OutputInterface $output = null, InputInterface $input = null): void
+    public function importItem(string $itemId, OutputInterface $output = null, InputInterface $input = null): void
     {
         $item = $this->getAvailableItem($itemId);
         $io = new SymfonyStyle($input, $output);
         $item
-            ->setForceImport($force)
             ->importScheduledData($this, $io, $this->getLogger())
         ;
     }

@@ -42,6 +42,21 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     protected $itemHashIdFields;
 
     /**
+     * @var bool
+     */
+    protected $force;
+
+    /**
+     * @var bool
+     */
+    protected $syncData;
+
+    /**
+     * @var bool
+     */
+    protected $skipExisted;
+
+    /**
      * Importable fields options
      * @var ImportableFieldsOptions
      */
@@ -206,6 +221,69 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
                 $fieldsOptions->set($field->getName(), new ImportableFieldOptions());
             }
         }
+        return $this;
+    }
+
+    /**
+     * Checks if force
+     * @return bool
+     */
+    public function isForce(): bool
+    {
+        return (bool) $this->force;
+    }
+
+    /**
+     * Sets force
+     * @param bool|null $force
+     * @return $this
+     */
+    public function setForce(?bool $force): self
+    {
+        $this->force = (bool) $force;
+        $this->notify();
+        return $this;
+    }
+
+    /**
+     * Checks if sync data needed
+     * @return bool
+     */
+    public function isSyncData(): bool
+    {
+        return (bool) $this->syncData;
+    }
+
+    /**
+     * Sets sync data
+     * @param bool|null $syncData
+     * @return $this
+     */
+    public function setSyncData(?bool $syncData): self
+    {
+        $this->syncData = (bool) $syncData;
+        $this->notify();
+        return $this;
+    }
+
+    /**
+     * Checks if skipping of existed vouchers needed
+     * @return bool
+     */
+    public function isSkipExisted(): bool
+    {
+        return (bool) $this->skipExisted;
+    }
+
+    /**
+     * Sets skip existed option
+     * @param bool $skipExisted
+     * @return $this
+     */
+    public function setSkipExisted(?bool $skipExisted): self
+    {
+        $this->skipExisted = $skipExisted;
+        $this->notify();
         return $this;
     }
 

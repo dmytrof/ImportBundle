@@ -674,8 +674,7 @@ abstract class AbstractImporter implements ImporterInterface
      */
     protected function isProcessOfImportItemNeeded(Item $importedItem, array $item): bool
     {
-        return $this->getTask()->isForceImport()
-            || $importedItem->isForceImport()
+        return $this->getOptions()->isForce()
             || $importedItem->getDataHash() !== $importedItem->generateDataHash($item)
             || $importedItem->getConfigHash() !== $this->getOptionsHash()
             || !$importedItem->getTarget()->getModel()
@@ -738,6 +737,18 @@ abstract class AbstractImporter implements ImporterInterface
     }
 
     /**
+     * Checks if direct submit clear missing needed
+     * @param SimpleModelInterface $object
+     * @param Item $importedItem
+     * @param ImportFormData $importFormData
+     * @return bool
+     */
+    protected function isDirectSubmitClearMissing(SimpleModelInterface $object, Item $importedItem, ImportFormData $importFormData): bool
+    {
+        return $object->isModelNew() || $this->getOptions()->isSyncData() || !$importFormData->isMethodPatch();
+    }
+
+    /**
      * Imports data from Item
      * @param Item $importedItem
      * @param bool $flush
@@ -769,7 +780,7 @@ abstract class AbstractImporter implements ImporterInterface
                 ->processModelForm($form, [
                     'directSubmit' => true,
                     'data' => $importFormData->getData(),
-                    'directSubmitClearMissing' => !$importFormData->isMethodPatch(),
+                    'directSubmitClearMissing' => $this->isDirectSubmitClearMissing($object, $importedItem, $importFormData),
                 ])
                 ->checkModelForm($form)
                 ->save($object, [
