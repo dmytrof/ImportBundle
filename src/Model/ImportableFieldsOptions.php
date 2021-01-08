@@ -39,14 +39,15 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
     /**
      * {@inheritDoc}
      */
-    public function set($key, $value)
+    public function set($key, $value): self
     {
         if (!$value instanceof ImportableFieldOptions && !is_null($value)) {
             throw new InvalidArgumentException(sprintf('Element must be %s. Got: %s', ImportableFieldOptions::class, gettype($value)));
         }
         if (!is_null($value)) {
             $value->attach($this);
-            return parent::set($key, $value);
+            parent::set($key, $value);
+            return $this;
         }
         return $this;
     }
