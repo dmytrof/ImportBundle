@@ -63,6 +63,17 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     protected $importableFieldsOptions;
 
     /**
+     * @inheritDoc
+     */
+    public static function getOptionsHashScheme(): array
+    {
+        return [
+            'itemHashIdFields' => true,
+            'importableFieldsOptions' => true,
+        ];
+    }
+
+    /**
      * Returns path delimiter
      * @return string
      */

@@ -17,6 +17,12 @@ use Dmytrof\ImportBundle\Model\{ImportableFields, ImportableFieldsOptions};
 interface ImporterOptionsInterface extends \SplSubject, ArrayConvertibleModelInterface
 {
     /**
+     * Returns options hash scheme
+     * @return array
+     */
+    public static function getOptionsHashScheme(): array;
+
+    /**
      * Returns path delimiter
      * @return string
      */

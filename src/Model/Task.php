@@ -681,7 +681,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function getImporterOptionsHash(): ?string
     {
         if (is_null($this->importerOptionsHash)) {
-            $this->importerOptionsHash = !is_null($this->getImporterOptionsArr()) ? sha1(json_encode($this->getImporterOptionsArr())) : null;
+            $this->importerOptionsHash = !is_null($this->getImporterOptionsArr()) ? sha1(json_encode(array_intersect_key($this->getImporterOptionsArr(), $this->getImporterOptions()->getOptionsHashScheme()))) : null;
         }
 
         return $this->importerOptionsHash;
