@@ -293,6 +293,24 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     }
 
     /**
+     * Checks if status is ERROR
+     * @return bool
+     */
+    public function isStatusError(): bool
+    {
+        return $this->getStatusId() === static::STATUS_ERROR;
+    }
+
+    /**
+     * Checks if status is DATA ERROR
+     * @return bool
+     */
+    public function isStatusDataError(): bool
+    {
+        return $this->getStatusId() === static::STATUS_DATA_ERROR;
+    }
+
+    /**
      * Returns config hash
      * @return null|string
      */

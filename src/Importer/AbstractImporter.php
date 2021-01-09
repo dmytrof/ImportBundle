@@ -675,6 +675,8 @@ abstract class AbstractImporter implements ImporterInterface
     protected function isProcessOfImportItemNeeded(Item $importedItem, array $item): bool
     {
         return $this->getOptions()->isForce()
+            || $importedItem->isStatusError()
+            || $importedItem->isStatusDataError()
             || $importedItem->getDataHash() !== $importedItem->generateDataHash($item)
             || $importedItem->getConfigHash() !== $this->getOptionsHash()
             || !$importedItem->getTarget()->getModel()
@@ -745,15 +747,17 @@ abstract class AbstractImporter implements ImporterInterface
      */
     protected function isDirectSubmitClearMissing(SimpleModelInterface $object, Item $importedItem, ImportFormData $importFormData): bool
     {
-        return $object->isModelNew() || $this->getOptions()->isSyncData() || !$importFormData->isMethodPatch();
+        return $object->isModelNew() || $this->getOptions()->isSyncData();
     }
 
     /**
      * Checks object existence
      * @param SimpleModelInterface $object
+     * @param Item $importedItem
+     * @param ImportFormData $importFormData
      * @return bool
      */
-    protected function checkObjectExistence(SimpleModelInterface $object): bool
+    protected function checkObjectExistence(SimpleModelInterface $object, Item $importedItem, ImportFormData $importFormData): bool
     {
         if (!$object->isModelNew() && $this->getOptions()->isSkipExisted()) {
             throw new SkippedItemException(sprintf('Skip updating of %s with ID: %s', $object->getClassName(), $object->getId()));
@@ -782,14 +786,12 @@ abstract class AbstractImporter implements ImporterInterface
                 $object = $this->findOrCreateObject($importedItem, $importFormData);
                 $isNew = !(bool) $object->getId();
             }
-            if (!$isNew){
-                $importFormData->setMethodPatch();
-            }
             $importedItem->setTarget($object);
 
-            $this->beforeObjectUpdate($object, $importedItem, $importFormData);
-            $this->checkObjectExistence($object);
+            $this->beforeCheckObjectExistence($object, $importedItem, $importFormData);
+            $this->checkObjectExistence($object, $importedItem, $importFormData);
 
+            $this->beforeObjectUpdate($object, $importedItem, $importFormData);
             $form = $this->getForm(['model' => $object]);
             $this->getManager()
                 ->processModelForm($form, [
@@ -863,6 +865,17 @@ abstract class AbstractImporter implements ImporterInterface
             ;
             $this->saveImportedItem($importedItem);
         }
+    }
+
+    /**
+     * Some actions before check object existence
+     * @param SimpleModelInterface $object
+     * @param Item $importedItem
+     * @param ImportFormData $importFormData
+     */
+    protected function beforeCheckObjectExistence(SimpleModelInterface $object, Item $importedItem, ImportFormData $importFormData): void
+    {
+
     }
 
     /**

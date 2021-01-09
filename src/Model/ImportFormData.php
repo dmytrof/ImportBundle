@@ -21,11 +21,6 @@ class ImportFormData implements \ArrayAccess
     protected $data;
 
     /**
-     * @var string
-     */
-    protected $method = Request::METHOD_POST;
-
-    /**
      * @var array
      */
     protected $options = [];
@@ -41,12 +36,13 @@ class ImportFormData implements \ArrayAccess
 
     /**
      * Returns data
+     * @param bool $removeEmptyProperties
      * @return array
      */
-    public function getData(): array
+    public function getData(bool $removeEmptyProperties = false): array
     {
         $data = $this->data;
-        if ($this->isMethodPatch()) {
+        if ($removeEmptyProperties) {
             $data = $this->removeEmptyProperties($data);
         }
         return $data;
@@ -103,25 +99,6 @@ class ImportFormData implements \ArrayAccess
     }
 
     /**
-     * @return string
-     */
-    public function getMethod(): string
-    {
-        return $this->method;
-    }
-
-    /**
-     * Sets method
-     * @param string $method
-     * @return ImportFormData
-     */
-    public function setMethod(string $method): self
-    {
-        $this->method = $method;
-        return $this;
-    }
-
-    /**
      * Returns options
      * @param string $name
      * @return mixed|null
@@ -151,24 +128,5 @@ class ImportFormData implements \ArrayAccess
     {
         $this->options[$name] = $value;
         return $this;
-    }
-
-    /**
-     * Sets form method to Patch
-     * @return ImportFormData
-     */
-    public function setMethodPatch(): self
-    {
-        $this->method = Request::METHOD_PATCH;
-        return $this;
-    }
-
-    /**
-     * Checks if method is patch
-     * @return bool
-     */
-    public function isMethodPatch(): bool
-    {
-        return $this->method == Request::METHOD_PATCH;
     }
 }
