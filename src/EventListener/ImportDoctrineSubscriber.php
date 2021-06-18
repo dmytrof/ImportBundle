@@ -12,7 +12,8 @@
 namespace Dmytrof\ImportBundle\EventListener;
 
 use Doctrine\ORM\Events;
-use Doctrine\Common\{Persistence\Event\LifecycleEventArgs, EventSubscriber};
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Dmytrof\ImportBundle\{Manager\TaskManager, Model\Item, Model\Task};
 use Dmytrof\ImportBundle\Service\{ImportersContainer,  ReadersContainer};
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
