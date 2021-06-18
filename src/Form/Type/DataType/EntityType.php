@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Form\Type\DataType;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\{AbstractType, Extension\Core\Type\TextType, FormBuilderInterface};
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Dmytrof\ImportBundle\Form\DataTransformer\EntityToPropertyValueTransformer;

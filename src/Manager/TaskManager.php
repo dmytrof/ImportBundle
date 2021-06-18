@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ImportBundle\{
     Exception\TaskNotFoundException as NotFoundException,
