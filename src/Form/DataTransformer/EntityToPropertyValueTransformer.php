@@ -14,8 +14,8 @@ namespace Dmytrof\ImportBundle\Form\DataTransformer;
 use Dmytrof\ModelsManagementBundle\Repository\EntityRepositoryInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Inflector\Inflector;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Inflector\{Inflector, NoopWordInflector};
 use Symfony\Component\Form\{DataTransformerInterface, Exception\TransformationFailedException};
 
 class EntityToPropertyValueTransformer implements DataTransformerInterface
@@ -200,7 +200,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected function convertEntityToString($entity): ?string
     {
         if ($entity instanceof $this->entityClass) {
-            return $entity->{'get'.Inflector::classify($this->entityProperty)}();
+            return $entity->{'get'.(new Inflector(new NoopWordInflector(), new NoopWordInflector()))->classify($this->entityProperty)}();
         }
         return null;
     }
@@ -301,7 +301,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     protected function createNewEntity(string $value)
     {
         $entity = ($this->getRepository() instanceof EntityRepositoryInterface) ? $this->getRepository()->createNew() : new $this->entityClass();
-        $entity->{'set'.Inflector::classify($this->entityProperty)}($value);
+        $entity->{'set'.(new Inflector(new NoopWordInflector(), new NoopWordInflector()))->classify($this->entityProperty)}($value);
         $this->registry->getManager()->persist($entity);
         $this->registry->getManager()->flush();
 

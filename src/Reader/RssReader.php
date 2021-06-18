@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Reader;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\{Inflector, NoopWordInflector};
 use Dmytrof\ImportBundle\Model\ImportedData;
 use Laminas\Feed\Reader\{Reader, Entry\EntryInterface};
 
@@ -80,8 +80,9 @@ class RssReader extends AbstractReader
     protected function parseNamespaces(EntryInterface $entry, array $namespaces): array
     {
         $data = [];
+        $inflector = new Inflector(new NoopWordInflector(), new NoopWordInflector());
         foreach ($namespaces as $key => $link) {
-            $methodName = 'parse'.Inflector::camelize($key).'Namespace';
+            $methodName = 'parse'.$inflector->camelize($key).'Namespace';
             if (method_exists($this, $methodName)) {
                 $data[$key] = $this->$methodName($entry, $link);
             }
