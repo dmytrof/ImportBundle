@@ -247,6 +247,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setImportersContainer(?ImportersContainer $importersContainer): self
     {
         $this->importersContainer = $importersContainer;
+
         return $this;
     }
 
@@ -267,6 +268,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setReadersContainer(?ReadersContainer $readersContainer): self
     {
         $this->readersContainer = $readersContainer;
+
         return $this;
     }
 
@@ -287,6 +289,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher): self
     {
         $this->eventDispatcher = $eventDispatcher;
+
         return $this;
     }
 
@@ -294,7 +297,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * Returns array of periods
      * @return array
      */
-    public static function getPeriods()
+    public static function getPeriods(): array
     {
         return array_keys(static::PERIODS);
     }
@@ -303,7 +306,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * Returns array of periods titles
      * @return array
      */
-    public static function getPeriodsTitles()
+    public static function getPeriodsTitles(): array
     {
         return static::PERIODS;
     }
@@ -324,6 +327,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setTitle(?string $title): self
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -353,6 +357,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setCode(?string $code): self
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -373,6 +378,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setLink(?string $link): self
     {
         $this->link = $link;
+
         return $this;
     }
 
@@ -393,6 +399,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setPaginatedLink(?bool $paginatedLink): self
     {
         $this->paginatedLink = (bool) $paginatedLink;
+
         return $this;
     }
 
@@ -412,6 +419,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setPageParameterInLink(?string $pageParameterInLink): self
     {
         $this->pageParameterInLink = $pageParameterInLink;
+
         return $this;
     }
 
@@ -432,6 +440,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setFirstPageValue(?int $firstPageValue): Task
     {
         $this->firstPageValue = (int) $firstPageValue;
+
         return $this;
     }
 
@@ -452,6 +461,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setPeriod(?int $period): self
     {
         $this->period = $period;
+
         return $this;
     }
 
@@ -472,6 +482,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setInProgress(?bool $inProgress = true): self
     {
         $this->inProgress = (bool) $inProgress;
+
         return $this;
     }
 
@@ -492,6 +503,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setImportedAt(?\DateTime $importedAt): Task
     {
         $this->importedAt = $importedAt;
+
         return $this;
     }
 
@@ -512,6 +524,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setImportStatisticsArr(?array $importStatisticsArr): self
     {
         $this->importStatisticsArr = $importStatisticsArr;
+
         return $this;
     }
 
@@ -591,7 +604,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      */
     public function getImporter(): ?ImporterInterface
     {
-        if (is_null($this->importer) && $this->getImportersContainer()->has($this->getImporterCode())) {
+        if (is_null($this->importer) && $this->getImportersContainer() && $this->getImportersContainer()->has($this->getImporterCode())) {
             $this->importer = (clone $this->getImportersContainer()->get($this->getImporterCode()))
                 ->setTask($this)
             ;
@@ -671,6 +684,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function updateImporterOptions(?ImporterOptionsInterface $options): self
     {
         $this->setImporterOptions($options);
+
         return $this;
     }
 
@@ -694,6 +708,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     protected function resetImporterOptionsHash(): self
     {
         $this->importerOptionsHash = null;
+
         return $this;
     }
 
@@ -747,7 +762,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      */
     public function validateReaderCode(ExecutionContextInterface $context)
     {
-        if (!$this->getReadersContainer()->has($this->getReaderCode())) {
+        if ($this->getReadersContainer() && !$this->getReadersContainer()->has($this->getReaderCode())) {
             $context
                 ->buildViolation('Undefined reader code')
                 ->atPath('readerCode')
@@ -762,7 +777,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      */
     public function getReader(): ?ReaderInterface
     {
-        if (is_null($this->reader) && $this->getReadersContainer()->has($this->getReaderCode())) {
+        if (is_null($this->reader) && $this->getReadersContainer() && $this->getReadersContainer()->has($this->getReaderCode())) {
             $this->reader = (clone $this->getReadersContainer()->get($this->getReaderCode()))
                 ->setTask($this)
             ;
@@ -797,6 +812,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setReaderOptionsArr(?array $readerOptionsArr): self
     {
         $this->readerOptionsArr = $readerOptionsArr;
+
         return $this;
     }
 
@@ -838,6 +854,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function updateReaderOptions(?ReaderOptionsInterface $options): self
     {
         $this->setReaderOptions($options);
+
         return $this;
     }
 
@@ -880,7 +897,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * @param array $options
      * @return $this
      */
-    public function importData(TaskManager $manager, ?SymfonyStyle $io = null, ?Logger $logger = null, array $options = []): self
+    public function importData(TaskManager $manager, SymfonyStyle $io, Logger $logger, array $options = []): self
     {
         try {
             $io->title($this->getModelTitle());
@@ -890,9 +907,14 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                 ->setImportedAt(new \DateTime())
             ;
             $manager->save($this);
-            $this->getEventDispatcher()->dispatch(new PreImportTaskEvent($this));
+            if ($this->getEventDispatcher()) {
+                $this->getEventDispatcher()->dispatch(new PreImportTaskEvent($this));
+            }
 
             $importer = $this->getImporter();
+            if (!$importer) {
+                throw new TaskException('Undefined importer');
+            }
             $importer
                 ->setOutput($io)
                 ->setLogger($logger)
@@ -907,9 +929,15 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                 ->setImportStatistics($importer->getImportStatistics())
             ;
             $manager->save($task);
-            $this->getEventDispatcher()->dispatch(new PostImportTaskEvent($task));
+            if ($this->getEventDispatcher()) {
+                $this->getEventDispatcher()->dispatch(new PostImportTaskEvent($this));
+            }
+
             return $task;
         } catch (ReaderException|ImporterException $e) {
+            if ($options['throwExceptions'] ?? false) {
+                throw $e;
+            }
             if ($io || $logger) {
                 if ($logger) {
                     $logger->error($e->getMessage());
@@ -917,17 +945,17 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                 if ($io) {
                     $io->error($e->getMessage());
                 }
+
                 return $this->getId() ? $this : $manager->getManager()->merge($this);
-            } else {
-                throw $e;
             }
+            throw $e;
         }
     }
 
     /**
      * Returns prepared link
      * @param int $page
-     * @return ImportedData
+     * @return string
      */
     public function getPreparedLink(int $page = 1): string
     {
@@ -938,6 +966,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                 throw new TaskException(sprintf('Paginated link has no page parameter "%s"', $this->getPageParameterInLink()));
             }
         }
+
         return $link;
     }
 
@@ -949,6 +978,10 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      */
     public function getDataFromLink(bool $exampleData = false, string $link = null): ImportedData
     {
+        if (!$this->getReader()) {
+            throw new TaskException('Undefined reader');
+        }
+
         return $this->getReader()->getDataFromLink($link ?? $this->getLink(), ['exampleData' => $exampleData]);
     }
 
@@ -969,6 +1002,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function setForceImport(?bool $forceImport = true): Task
     {
         $this->forceImport = (bool) $forceImport;
+
         return $this;
     }
 }

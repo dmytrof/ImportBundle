@@ -84,7 +84,7 @@ class ImportTasksCommand extends Command
             foreach ($this->getTaskManager()->getScheduledImportTasks() as $task) {
                 array_push($taskIds, $task->getId());
             }
-            $tasksCount = sizeof($taskIds);
+            $tasksCount = count($taskIds);
             $io = new SymfonyStyle($input, $output);
             if ($tasksCount) {
                 $io->note(sprintf('There are %s scheduled tasks', $tasksCount));
@@ -112,6 +112,9 @@ class ImportTasksCommand extends Command
             }
             if ($input->getOption('page')) {
                 $options['page'] = $input->getOption('page');
+            }
+            if ($input->getOption('throw-exceptions')) {
+                $options['throwExceptions'] = $input->getOption('throw-exceptions');
             }
             $this->getTaskManager()->importTask($taskId, $output, $input, $options);
         } catch (\Exception $e) {
