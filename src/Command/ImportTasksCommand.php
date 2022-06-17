@@ -97,6 +97,8 @@ class ImportTasksCommand extends Command
             }
         }
         $this->release();
+
+        return Command::SUCCESS;
 	}
 
     /**
