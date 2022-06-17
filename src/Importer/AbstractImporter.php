@@ -13,7 +13,7 @@ namespace Dmytrof\ImportBundle\Importer;
 
 use Monolog\Logger;
 use Psr\Log\{LoggerInterface, NullLogger};
-use Symfony\Component\Console\{Input\ArrayInput, Style\SymfonyStyle};
+use Symfony\Component\Console\{Helper\ProgressBar, Input\ArrayInput, Style\SymfonyStyle};
 use Symfony\Component\Console\Output\{NullOutput, OutputInterface};
 use Symfony\Component\Form\{Form, FormInterface};
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +40,7 @@ abstract class AbstractImporter implements ImporterInterface
     public const IMPORTER_FORM_CLASS = null;
     public const IMPORTER_FORM_OPTIONS = [];
     public const COMPOUND_FIELD_NAME_DELIMITER = '.';
-    public const BUTCH_LENGTH = 10;
+    public const BATCH_LENGTH                  = 10;
 
     /**
      * @var TranslatorInterface
@@ -137,12 +137,12 @@ abstract class AbstractImporter implements ImporterInterface
     }
 
     /**
-     * Returns butch length
+     * Returns batch length
      * @return int
      */
-    public static function getButchLength(): int
+    public static function getBatchLength(): int
     {
-        return static::BUTCH_LENGTH;
+        return static::BATCH_LENGTH;
     }
 
     /**
@@ -467,12 +467,13 @@ abstract class AbstractImporter implements ImporterInterface
             $formData = [];
             foreach($formDataArr as $key => $value) {
                 if (is_array($value)) {
-                    $formData = array_merge($formData, $flattenFormData($value, $key.static::COMPOUND_FIELD_NAME_DELIMITER));
+                    $formData[] = $flattenFormData($value, $key.static::COMPOUND_FIELD_NAME_DELIMITER);
                 } else {
-                    $formData[$prefix.$key] = $value;
+                    $formData[] = [$prefix.$key => $value];
                 }
             }
-            return $formData;
+
+            return array_merge(...$formData);
         };
 
         $formData = $flattenFormData($importFormData->getData());
@@ -581,8 +582,6 @@ abstract class AbstractImporter implements ImporterInterface
         $this->getOutput()->text('Total entries: '.$itemsCount);
         $this->getLogger()->info('Processing data: END', ['total_entries' => $itemsCount]);
 
-        $butchLength = $this->getButchLength();
-
         $this->getOutput()->section('Importing');
         $this->getLogger()->info('Importing: START');
 
@@ -591,41 +590,7 @@ abstract class AbstractImporter implements ImporterInterface
         $progressBar->start();
         $this->getImportStatistics()->reset()->setAll($itemsCount);
 
-        foreach ($items as $row) {
-            $progressBar->advance();
-            if (empty($row)) {
-                $this->getImportStatistics()->incrementSkipped();
-                $this->logImportItemResult('info', 'SKIPPED', null, (array) $row, ['No data in row']);
-                continue;
-            }
-            $item = $data->prepareRow($row);
-            $entryId = $this->getEntryId($item);
-            if (!$this->isDuplicatedEntryId($entryId)) {
-                try {
-                    $this->importEntryItem($entryId, $item);
-                } catch (\Exception $e) {
-                    $this->getLogger()->error($e->getMessage(), ['importFormData' => $item]);
-                    $this->getImportStatistics()->incrementErrors();
-                }
-            } else {
-                try {
-                    $this->importDuplicatedEntryItem($entryId, $item);
-                    $this->getImportStatistics()->incrementDuplicates();
-                    $this->logImportItemResult('info', 'DUPLICATE', null, $item);
-                } catch (\Exception $e) {
-                    $this->getLogger()->error($e->getMessage(), ['importFormData' => $item]);
-                    $this->getImportStatistics()->incrementErrors();
-                }
-            }
-
-            if ($progressBar->getProgress() % $butchLength == 0 && $this->getManager() instanceof AbstractDoctrineManager) {
-                $this->getManager()->getManager()->flush();
-                $this->getManager()->getManager()->clear();
-            }
-            unset($row);
-            unset($item);
-            unset($entryId);
-        }
+        $this->importDataItems($data, $items, $progressBar);
 
         if ($this->getManager() instanceof AbstractDoctrineManager) {
             $this->getManager()->getManager()->flush();
@@ -664,6 +629,52 @@ abstract class AbstractImporter implements ImporterInterface
         ]);
 
         return $this;
+    }
+
+    /**
+     * Imports items
+     * @param ImportedData $data
+     * @param iterable $items
+     * @param ProgressBar $progressBar
+     */
+    protected function importDataItems(ImportedData $data, iterable $items, ProgressBar $progressBar): void
+    {
+        $batchLength = $this->getBatchLength();
+        foreach ($items as $row) {
+            $progressBar->advance();
+            $item = $data->prepareRow($row);
+            if (empty($row)) {
+                $this->getImportStatistics()->incrementSkipped();
+                $this->logImportItemResult('info', 'SKIPPED', null, $item, ['No data in row']);
+                continue;
+            }
+            $entryId = $this->getEntryId($item);
+            if (!$this->isDuplicatedEntryId($entryId)) {
+                try {
+                    $this->importEntryItem($entryId, $item);
+                } catch (\Exception $e) {
+                    $this->getLogger()->error($e->getMessage(), ['importFormData' => $item]);
+                    $this->getImportStatistics()->incrementErrors();
+                }
+            } else {
+                try {
+                    $this->importDuplicatedEntryItem($entryId, $item);
+                    $this->getImportStatistics()->incrementDuplicates();
+                    $this->logImportItemResult('info', 'DUPLICATE', null, $item);
+                } catch (\Exception $e) {
+                    $this->getLogger()->error($e->getMessage(), ['importFormData' => $item]);
+                    $this->getImportStatistics()->incrementErrors();
+                }
+            }
+
+            if ($progressBar->getProgress() % $batchLength == 0 && $this->getManager() instanceof AbstractDoctrineManager) {
+                $this->getManager()->getManager()->flush();
+                $this->getManager()->getManager()->clear();
+            }
+            unset($row);
+            unset($item);
+            unset($entryId);
+        }
     }
 
     /**
@@ -904,8 +915,8 @@ abstract class AbstractImporter implements ImporterInterface
      * Write import status to log
      * @param string $method
      * @param string $message
-     * @param SimpleModelInterface $object
-     * @param ImportFormData $importFormData
+     * @param SimpleModelInterface|null $object
+     * @param ImportFormData|array $importFormData
      * @param array $errors
      */
     protected function logImportItemResult(string $method, string $message, ?SimpleModelInterface $object, $importFormData, array $errors = []): void
