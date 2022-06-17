@@ -39,7 +39,7 @@ class ImportItemsCommand extends Command
     /**
 	 * ImportCommand configuration.
 	 */
-	protected function configure()
+	protected function configure(): void
 	{
 		$this
 			->setName('dmytrof:import:items')
@@ -73,7 +73,7 @@ class ImportItemsCommand extends Command
 	 * @return int|null|void
 	 * @throws \Exception
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
         $io = new SymfonyStyle($input, $output);
         if (!$this->lock()) {
@@ -102,7 +102,7 @@ class ImportItemsCommand extends Command
 
             do {
                 $itemIds = $this->getItemManager()->getScheduledImportItems($input->getOption('batch'), $input->getOption('task'));
-                $itemsCount += $count = sizeof($itemIds);
+                $itemsCount += $count = count($itemIds);
                 if ($count) {
                     if (!$i) {
                         $io->note(sprintf('There are %s scheduled items', $itemsCount));
@@ -131,7 +131,7 @@ class ImportItemsCommand extends Command
      * @param OutputInterface $output
      * @param InputInterface $input
      */
-    protected function importItem(string $itemId, OutputInterface $output, InputInterface $input)
+    protected function importItem(string $itemId, OutputInterface $output, InputInterface $input): void
     {
         try {
             $this->getItemManager()->importItem($itemId, $output, $input);

@@ -593,6 +593,9 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     {
         $this->importer = null;
         $this->importerCode = $importerCode;
+        if (!$this->getImporter()) {
+            throw new TaskException('Undefined importer');
+        }
         $this->updateImporterOptions($this->getImporter()->getOptions());
 
         return $this;
@@ -695,6 +698,9 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     public function getImporterOptionsHash(): ?string
     {
         if (is_null($this->importerOptionsHash)) {
+            if (!$this->getImporterOptions()) {
+                throw new TaskException('Undefined importer options');
+            }
             $this->importerOptionsHash = !is_null($this->getImporterOptionsArr()) ? sha1(json_encode(array_intersect_key($this->getImporterOptionsArr(), $this->getImporterOptions()->getOptionsHashScheme()))) : null;
         }
 
@@ -760,7 +766,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      *
      * @Assert\Callback(groups={Task::VALIDATION_GROUP_LINK_AND_PARSER})
      */
-    public function validateReaderCode(ExecutionContextInterface $context)
+    public function validateReaderCode(ExecutionContextInterface $context): void
     {
         if ($this->getReadersContainer() && !$this->getReadersContainer()->has($this->getReaderCode())) {
             $context
@@ -902,6 +908,11 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         try {
             $io->title($this->getModelTitle());
             $logger->info('IMPORTING: '.$this->getModelTitle());
+            if ($options['linkParams']) {
+                $message = sprintf('Link params: %s', json_encode($options['linkParams']));
+                $io->note($message);
+                $logger->info($message);
+            }
             $this
                 ->setInProgress(true)
                 ->setImportedAt(new \DateTime())
@@ -922,7 +933,6 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
 
             $importer->getLogger()->info('Importing finished!');
             $importer->getOutput()->success('Importing finished!');
-            /** @var Task $task */
             $task = $manager->getManager()->merge($this);
             $task
                 ->setInProgress(false)
@@ -955,9 +965,11 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Returns prepared link
      * @param int $page
+     * @param array $linkParams
+     *
      * @return string
      */
-    public function getPreparedLink(int $page = 1): string
+    public function getPreparedLink(int $page = 1, array $linkParams = []): string
     {
         $link = $this->getLink();
         if ($this->isPaginatedLink()) {
@@ -965,6 +977,13 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
             if ($link === $this->getLink()) { // link is without page parameter
                 throw new TaskException(sprintf('Paginated link has no page parameter "%s"', $this->getPageParameterInLink()));
             }
+        }
+        if ($linkParams) {
+            $link = str_replace(
+                array_map(function ($item) { return sprintf('{%s}', $item); }, array_keys($linkParams)),
+                array_values($linkParams),
+                $link
+            );
         }
 
         return $link;

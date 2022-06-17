@@ -39,7 +39,7 @@ class ImportTasksCommand extends Command
     /**
 	 * ImportCommand configuration.
 	 */
-	protected function configure()
+	protected function configure(): void
 	{
 		$this
 			->setName('dmytrof:import:tasks')
@@ -51,6 +51,7 @@ class ImportTasksCommand extends Command
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
             ->addOption('throw-exceptions', null, InputOption::VALUE_NONE, 'Throw exceptions')
             ->addOption('page', 'p', InputOption::VALUE_OPTIONAL, 'Page to import')
+            ->addOption('link-params', null, InputOption::VALUE_OPTIONAL, 'Link params JSON {"name":"value"}')
 		;
 	}
 
@@ -71,7 +72,7 @@ class ImportTasksCommand extends Command
 	 * @return int|null|void
 	 * @throws \Exception
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
         if (!$this->lock()) {
             $output->writeln('The command is already running in another process.');
@@ -82,7 +83,7 @@ class ImportTasksCommand extends Command
         } else {
             $taskIds = [];
             foreach ($this->getTaskManager()->getScheduledImportTasks() as $task) {
-                array_push($taskIds, $task->getId());
+                $taskIds[] = $task->getId();
             }
             $tasksCount = count($taskIds);
             $io = new SymfonyStyle($input, $output);
@@ -103,7 +104,7 @@ class ImportTasksCommand extends Command
      * @param OutputInterface $output
      * @param InputInterface $input
      */
-    protected function importTask(int $taskId, OutputInterface $output, InputInterface $input)
+    protected function importTask(int $taskId, OutputInterface $output, InputInterface $input): void
     {
         try {
             $options = [];
@@ -115,6 +116,9 @@ class ImportTasksCommand extends Command
             }
             if ($input->getOption('throw-exceptions')) {
                 $options['throwExceptions'] = $input->getOption('throw-exceptions');
+            }
+            if ($input->getOption('link-params')) {
+                $options['linkParams'] = json_decode($input->getOption('link-params'), true);
             }
             $this->getTaskManager()->importTask($taskId, $output, $input, $options);
         } catch (\Exception $e) {
