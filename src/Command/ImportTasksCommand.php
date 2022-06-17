@@ -98,7 +98,7 @@ class ImportTasksCommand extends Command
         }
         $this->release();
 
-        return Command::SUCCESS;
+        return defined('Command::SUCCESS') ? Command::SUCCESS: 0;
 	}
 
     /**
