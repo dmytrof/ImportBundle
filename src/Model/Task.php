@@ -908,11 +908,6 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         try {
             $io->title($this->getModelTitle());
             $logger->info('IMPORTING: '.$this->getModelTitle());
-            if ($options['linkParams']) {
-                $message = sprintf('Link params: %s', json_encode($options['linkParams']));
-                $io->note($message);
-                $logger->info($message);
-            }
             $this
                 ->setInProgress(true)
                 ->setImportedAt(new \DateTime())

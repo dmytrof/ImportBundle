@@ -519,7 +519,8 @@ abstract class AbstractImporter implements ImporterInterface
     protected function importTaskPage(Task $task, int $page, array $options = []): bool
     {
         $link = $task->getPreparedLink($page, $options['linkParams'] ?? []);
-        $this->getOutput()->section(sprintf('Reading data from resource %s', $task->isPaginatedLink() ? '(Page '.$page.')' : ''));
+        $linkParamsMessage = $options['linkParams'] ?? false ? sprintf('Link params: %s', json_encode($options['linkParams'])) : null;
+        $this->getOutput()->section(sprintf('Reading data from resource %s. %s', $task->isPaginatedLink() ? '(Page '.$page.')' : '', $linkParamsMessage));
         $this->getLogger()->info(sprintf('Reading data from resource %s: START', $link));
 
         $data = $task->getDataFromLink(false, $link);
