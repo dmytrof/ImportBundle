@@ -186,7 +186,9 @@ abstract class AbstractReader implements ReaderInterface
             ->resolve(array_intersect_key($options, ['loadAttempts' => true]));
 
         for ($attempt = 1; $attempt <= $options['loadAttempts']; $attempt++) {
-            $io?->text(sprintf('Load data attempt: %s', $attempt));
+            if ($io) {
+                $io->text(sprintf('Load data attempt: %s', $attempt));
+            }
             try {
                 $response = $this->getClient()->get($link);
                 break;
@@ -202,9 +204,11 @@ abstract class AbstractReader implements ReaderInterface
                 if ($attempt === $options['loadAttempts']) {
                     throw $e;
                 }
-                $io?->warning(sprintf('Failed: %s', $e->getMessage()));
                 $sleepTime = $attempt * 5;
-                $io?->note(sprintf('Waiting for a %s seconds', $sleepTime));
+                if ($io) {
+                    $io->warning(sprintf('Failed: %s', $e->getMessage()));
+                    $io->note(sprintf('Waiting for a %s seconds', $sleepTime));
+                }
                 sleep($sleepTime);
             }
         }

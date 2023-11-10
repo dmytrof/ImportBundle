@@ -59,7 +59,7 @@ class CsvReader extends AbstractReader
         $resolver = $this->configureGetDataFromLinkOptions(new OptionsResolver());
         $resolver->resolve(array_intersect_key($options, array_combine(
             $resolver->getDefinedOptions(),
-            $resolver->getDefinedOptions(),
+            $resolver->getDefinedOptions()
         )));
 
         $response = $this->getLinkResponse($link, $options, $io);
