@@ -12,6 +12,7 @@
 namespace Dmytrof\ImportBundle\Reader;
 
 use Dmytrof\ImportBundle\{Exception\ReaderException, Model\ImportedData};
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Laminas\Xml2Json\{Xml2Json, Exception\RuntimeException};
 
 class XmlReader extends AbstractReader
@@ -24,9 +25,9 @@ class XmlReader extends AbstractReader
     /**
      * {@inheritdoc}
      */
-    public function getDataFromLink(string $link, array $options = []): ImportedData
+    public function getDataFromLink(string $link, array $options = [], ?SymfonyStyle $io = null): ImportedData
     {
-        $response = $this->getLinkResponse($link);
+        $response = $this->getLinkResponse($link, $options, $io);
 
         try {
             $json = Xml2Json::fromXml($response->getBody()->getContents(), false);

@@ -13,6 +13,7 @@ namespace Dmytrof\ImportBundle\Reader;
 
 use Dmytrof\ImportBundle\Model\{ImportedData, Task};
 use Dmytrof\ImportBundle\Reader\Options\ReaderOptionsInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 interface ReaderInterface
 {
@@ -75,7 +76,8 @@ interface ReaderInterface
      * Returns data from link
      * @param string $link
      * @param array $options
+     * @param SymfonyStyle|null $io
      * @return ImportedData
      */
-    public function getDataFromLink(string $link, array $options = []): ImportedData;
+    public function getDataFromLink(string $link, array $options = [], ?SymfonyStyle $io = null): ImportedData;
 }

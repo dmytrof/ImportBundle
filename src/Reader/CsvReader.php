@@ -12,6 +12,7 @@
 namespace Dmytrof\ImportBundle\Reader;
 
 use Symfony\Component\Filesystem\{Exception\IOException, Filesystem};
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Dmytrof\ImportBundle\Reader\Options\{CsvReaderOptions, ReaderOptionsInterface};
 use Dmytrof\ImportBundle\Model\{ImportedData, ImportedDataFile};
@@ -53,10 +54,15 @@ class CsvReader extends AbstractReader
     /**
      * {@inheritdoc}
      */
-    public function getDataFromLink(string $link, array $options = []): ImportedData
+    public function getDataFromLink(string $link, array $options = [], ?SymfonyStyle $io = null): ImportedData
     {
-        $options = $this->configureGetDataFromLinkOptions(new OptionsResolver())->resolve($options);
-        $response = $this->getLinkResponse($link);
+        $resolver = $this->configureGetDataFromLinkOptions(new OptionsResolver());
+        $resolver->resolve(array_intersect_key($options, array_combine(
+            $resolver->getDefinedOptions(),
+            $resolver->getDefinedOptions(),
+        )));
+
+        $response = $this->getLinkResponse($link, $options, $io);
 
         if (!$this->hasResponseHeaderAnyValue($response, 'Content-type', ['text/csv', 'application/octet-stream'])) {
             throw new ReaderException(sprintf('Invalid CSV data'));

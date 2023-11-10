@@ -523,7 +523,7 @@ abstract class AbstractImporter implements ImporterInterface
         $this->getOutput()->section(sprintf('Reading data from resource %s. %s', $task->isPaginatedLink() ? '(Page '.$page.')' : '', $linkParamsMessage));
         $this->getLogger()->info(sprintf('Reading data from resource %s: START', $link));
 
-        $data = $task->getDataFromLink(false, $link);
+        $data = $task->getDataFromLink($link, $options, $this->getOutput());
 
         $this->getOutput()->text('Done');
         $this->getLogger()->info(sprintf('Reading data from resource %s: END', $link));

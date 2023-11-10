@@ -52,6 +52,7 @@ class ImportTasksCommand extends Command
             ->addOption('throw-exceptions', null, InputOption::VALUE_NONE, 'Throw exceptions')
             ->addOption('page', 'p', InputOption::VALUE_OPTIONAL, 'Page to import')
             ->addOption('link-params', null, InputOption::VALUE_OPTIONAL, 'Link params JSON {"name":"value"}')
+            ->addOption('load-attempts', null, InputOption::VALUE_OPTIONAL, 'Data load attempts', 3)
 		;
 	}
 
@@ -121,6 +122,9 @@ class ImportTasksCommand extends Command
             }
             if ($input->getOption('link-params')) {
                 $options['linkParams'] = json_decode($input->getOption('link-params'), true);
+            }
+            if ($input->getOption('load-attempts')) {
+                $options['loadAttempts'] = $input->getOption('load-attempts');
             }
             $this->getTaskManager()->importTask($taskId, $output, $input, $options);
         } catch (\Exception $e) {

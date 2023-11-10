@@ -14,12 +14,13 @@ namespace Dmytrof\ImportBundle\Reader;
 use Dmytrof\ImportBundle\Exception\ReaderException;
 use Dmytrof\ImportBundle\Model\{ImportedDataFile, Task};
 use Dmytrof\ImportBundle\Reader\Options\ReaderOptionsInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use GuzzleHttp\{Client, Exception\ClientException};
+use GuzzleHttp\{Client, Exception\ClientException, Exception\GuzzleException};
 use Psr\Http\Message\ResponseInterface;
 use Laminas\Json\Json;
 
@@ -158,27 +159,60 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /**
+     * Configures getLinkResponse options
+     * @param OptionsResolver $resolver
+     * @return OptionsResolver
+     */
+    protected function configureGetLinkResponseOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setDefaults([
+            'loadAttempts' => 1,
+        ]);
+        $resolver->setAllowedTypes('loadAttempts', ['int']);
+
+        return $resolver;
+    }
+
+    /**
      * Returns response from request to link
      * @param string $link
+     * @param array $options
+     * @param SymfonyStyle|null $io
      * @return ResponseInterface
      */
-    protected function getLinkResponse(string $link): ResponseInterface
+    protected function getLinkResponse(string $link, array $options = [], ?SymfonyStyle $io = null): ResponseInterface
     {
-        try {
-            $response = $this->getClient()->get($link);
-        } catch (ClientException $e) {
-            $message = $e->getMessage();
-            if ($e->hasResponse()) {
-                if ($e->getResponse()->getStatusCode() == 404) {
-                    $message = 'Resource not found';
+        $options = $this->configureGetLinkResponseOptions(new OptionsResolver())
+            ->resolve(array_intersect_key($options, ['loadAttempts' => true]));
+
+        for ($attempt = 1; $attempt <= $options['loadAttempts']; $attempt++) {
+            $io?->text(sprintf('Load data attempt: %s', $attempt));
+            try {
+                $response = $this->getClient()->get($link);
+                break;
+            } catch (ClientException $e) {
+                $message = $e->getMessage();
+                if ($e->hasResponse()) {
+                    if ($e->getResponse()->getStatusCode() == 404) {
+                        $message = 'Resource not found';
+                    }
                 }
+                throw new ReaderException($message);
+            } catch (GuzzleException $e) {
+                if ($attempt === $options['loadAttempts']) {
+                    throw $e;
+                }
+                $io?->warning(sprintf('Failed: %s', $e->getMessage()));
+                $sleepTime = $attempt * 5;
+                $io?->note(sprintf('Waiting for a %s seconds', $sleepTime));
+                sleep($sleepTime);
             }
-            throw new ReaderException($message);
         }
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             throw new ReaderException(sprintf('Response status is not OK: %s. Uri: %s', $response->getStatusCode(), $link));
         }
+
         return $response;
     }
 
@@ -269,8 +303,10 @@ abstract class AbstractReader implements ReaderInterface
     public function configureGetDataFromLinkOptions(OptionsResolver $resolver): OptionsResolver
     {
         $resolver->setDefault('exampleData', false);
-
         $resolver->setAllowedTypes('exampleData', ['bool']);
+
+        $this->configureGetLinkResponseOptions($resolver);
+
         return $resolver;
     }
 

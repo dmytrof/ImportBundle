@@ -986,17 +986,19 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
 
     /**
      * Returns data from link
-     * @param bool $exampleData
      * @param string|null $link
+     * @param array $options
+     * @param SymfonyStyle|null $io
      * @return ImportedData
      */
-    public function getDataFromLink(bool $exampleData = false, string $link = null): ImportedData
+    public function getDataFromLink(string $link = null, array $options = [], ?SymfonyStyle $io = null): ImportedData
     {
+        $options += ['exampleData' => false];
         if (!$this->getReader()) {
             throw new TaskException('Undefined reader');
         }
 
-        return $this->getReader()->getDataFromLink($link ?? $this->getLink(), ['exampleData' => $exampleData]);
+        return $this->getReader()->getDataFromLink($link ?? $this->getLink(), $options, $io);
     }
 
     /**

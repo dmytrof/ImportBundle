@@ -12,6 +12,7 @@
 namespace Dmytrof\ImportBundle\Reader;
 
 use Dmytrof\ImportBundle\Model\ImportedData;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JsonReader extends AbstractReader
 {
@@ -23,9 +24,9 @@ class JsonReader extends AbstractReader
     /**
      * {@inheritdoc}
      */
-    public function getDataFromLink(string $link, array $options = []): ImportedData
+    public function getDataFromLink(string $link, array $options = [], ?SymfonyStyle $io = null): ImportedData
     {
-        $response = $this->getLinkResponse($link);
+        $response = $this->getLinkResponse($link, $options, $io);
 
         return new ImportedData($this->convertJsonToArray($response->getBody()->getContents()));
     }

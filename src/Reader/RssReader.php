@@ -14,6 +14,7 @@ namespace Dmytrof\ImportBundle\Reader;
 use Doctrine\Inflector\{Inflector, NoopWordInflector};
 use Dmytrof\ImportBundle\Model\ImportedData;
 use Laminas\Feed\Reader\{Reader, Entry\EntryInterface};
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RssReader extends AbstractReader
 {
@@ -26,9 +27,9 @@ class RssReader extends AbstractReader
     /**
      * {@inheritdoc}
      */
-    public function getDataFromLink(string $link, array $options = []): ImportedData
+    public function getDataFromLink(string $link, array $options = [], ?SymfonyStyle $io = null): ImportedData
     {
-        $response = $this->getLinkResponse($link);
+        $response = $this->getLinkResponse($link, $options, $io);
         $rawData = $response->getBody()->getContents();
 
         $xml = new \SimpleXMLElement($rawData);
@@ -39,7 +40,7 @@ class RssReader extends AbstractReader
 
         $data = [];
         foreach ($feed as $entry) {
-            array_push($data, $this->parseEntryToArray($entry, $namespaces));
+            $data[] = $this->parseEntryToArray($entry, $namespaces);
         }
 
         return (new ImportedData($data))->setDataInRoot($this->isDataInRoot());
@@ -115,7 +116,7 @@ class RssReader extends AbstractReader
                 }
                 if (in_array($childNode->tagName, ['media:title', 'media:description'])) {
                     $data[str_replace('media:', '', $childNode->tagName)] = $childNode->textContent;
-                } else if ($childNode->tagName == 'media:thumbnail') {
+                } else if ($childNode->tagName === 'media:thumbnail') {
                     $data[str_replace('media:', '', $childNode->tagName)] = $childNode->getAttribute('url');
                 }
             }
@@ -126,18 +127,18 @@ class RssReader extends AbstractReader
         if ($nodeList->length > 0) {
             /** @var \DOMElement $mediaNode */
             foreach($nodeList as $mediaNode) {
-                if (!$mediaNode->getAttribute('medium') || $mediaNode->getAttribute('medium') == 'image') {
-                    array_push($images, $getMediaData->call($this, $mediaNode));
-                } elseif ($mediaNode->getAttribute('medium') == 'video') {
-                    array_push($videos, array_merge($getMediaData->call($this, $mediaNode), [
-                        'duration'  => $mediaNode->getAttribute('duration'),
-                        'lang'      => $mediaNode->hasAttribute('language') ? $mediaNode->getAttribute('language') : $mediaNode->getAttribute('lang'),
-                    ]));
-                } elseif ($mediaNode->getAttribute('medium') == 'audio') {
-                    array_push($audios, array_merge($getMediaData->call($this, $mediaNode), [
-                        'duration'  => $mediaNode->getAttribute('duration'),
-                        'lang'      => $mediaNode->hasAttribute('language') ? $mediaNode->getAttribute('language') : $mediaNode->getAttribute('lang'),
-                    ]));
+                if (!$mediaNode->getAttribute('medium') || $mediaNode->getAttribute('medium') === 'image') {
+                    $images[] = $getMediaData->call($this, $mediaNode);
+                } elseif ($mediaNode->getAttribute('medium') === 'video') {
+                    $videos[] = array_merge($getMediaData->call($this, $mediaNode), [
+                        'duration' => $mediaNode->getAttribute('duration'),
+                        'lang' => $mediaNode->hasAttribute('language') ? $mediaNode->getAttribute('language') : $mediaNode->getAttribute('lang'),
+                    ]);
+                } elseif ($mediaNode->getAttribute('medium') === 'audio') {
+                    $audios[] = array_merge($getMediaData->call($this, $mediaNode), [
+                        'duration' => $mediaNode->getAttribute('duration'),
+                        'lang' => $mediaNode->hasAttribute('language') ? $mediaNode->getAttribute('language') : $mediaNode->getAttribute('lang'),
+                    ]);
                 }
             }
         }
@@ -146,10 +147,10 @@ class RssReader extends AbstractReader
         $nodeList = $entry->getXpath()->evaluate($entry->getXpathPrefix() . '/media:thumbnail');
         if ($nodeList->length > 0) {
             foreach($nodeList as $mediaNode) {
-                array_push($thumbs, array_merge($getMediaData->call($this, $mediaNode), [
-                    'width'     => $mediaNode->getAttribute('width'),
-                    'height'    => $mediaNode->getAttribute('height'),
-                ]));
+                $thumbs[] = array_merge($getMediaData->call($this, $mediaNode), [
+                    'width' => $mediaNode->getAttribute('width'),
+                    'height' => $mediaNode->getAttribute('height'),
+                ]);
             }
         }
 
