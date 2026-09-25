@@ -42,6 +42,8 @@ abstract class AbstractImporter implements ImporterInterface
     public const COMPOUND_FIELD_NAME_DELIMITER = '.';
     public const BATCH_LENGTH                  = 10;
 
+    protected const FORCE_FETCH_MODEL_FROM_TARGET = true;
+
     /**
      * @var TranslatorInterface
      */
@@ -778,6 +780,11 @@ abstract class AbstractImporter implements ImporterInterface
         return true;
     }
 
+    protected function isForceFetchModelFromTarget(): bool
+    {
+        return static::FORCE_FETCH_MODEL_FROM_TARGET;
+    }
+
     /**
      * Imports data from Item
      * @param Item $importedItem
@@ -786,10 +793,13 @@ abstract class AbstractImporter implements ImporterInterface
     protected function importFromItem(Item $importedItem, bool $flush = false): void
     {
         $importFormData = $this->getImportFormData($importedItem);
-        try {
-            $object = $importedItem->getTarget()->getModel();
-        } catch (InvalidTargetException $e) {
-            $object = null;
+        $object = null;
+        if ($this->isForceFetchModelFromTarget()) {
+            try {
+                $object = $importedItem->getTarget()->getModel();
+            } catch (InvalidTargetException $e) {
+                $object = null;
+            }
         }
 
         try {
