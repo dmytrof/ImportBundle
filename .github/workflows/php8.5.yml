@@ -1,4 +1,4 @@
-name: PHP8 Composer v2
+name: PHP8.5 Composer v2
 
 on: [push]
 
@@ -13,7 +13,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.0'
+        php-version: '8.5'
 
     - name: PHP version
       run: php --version
