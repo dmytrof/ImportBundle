@@ -18,41 +18,36 @@ class CsvReaderOptions extends AbstractReaderOptions
     /**
      * Has heading row
      * @var bool
-     *
-     * @Assert\Type("bool")
      */
+    #[Assert\Type('bool')]
     protected $hasHeadingRow = false;
 
     /**
      * Skip empty rows
      * @var bool
-     *
-     * @Assert\Type("bool")
      */
+    #[Assert\Type('bool')]
     protected $skipEmptyRows = true;
 
     /**
      * Delimiter
      * @var string
-     *
-     * @Assert\NotNull
      */
+    #[Assert\NotNull]
     protected $delimiter = ',';
 
     /**
      * Enclosure
      * @var string
-     *
-     * @Assert\NotNull
      */
+    #[Assert\NotNull]
     protected $enclosure = '"';
 
     /**
      * Escape
      * @var string
-     *
-     * @Assert\NotNull
      */
+    #[Assert\NotNull]
     protected $escape = '\\';
 
     /**
@@ -159,4 +154,4 @@ class CsvReaderOptions extends AbstractReaderOptions
         $this->notify();
         return $this;
     }
-}
+}

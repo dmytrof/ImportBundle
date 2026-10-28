@@ -102,7 +102,7 @@ class ItemManager extends AbstractDoctrineManager
      * @param OutputInterface|null $output
      * @param InputInterface|null $input
      */
-    public function importItem(string $itemId, OutputInterface $output = null, InputInterface $input = null): void
+    public function importItem(string $itemId, ?OutputInterface $output = null, ?InputInterface $input = null): void
     {
         $item = $this->getAvailableItem($itemId);
         $io = new SymfonyStyle($input, $output);
@@ -121,4 +121,4 @@ class ItemManager extends AbstractDoctrineManager
     {
         return $this->getRepository()->getScheduledImportItems($batch, $taskId);
     }
-}
+}

@@ -37,7 +37,7 @@ class ReadersContainer implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->readers->getIterator();
     }
@@ -97,4 +97,4 @@ class ReadersContainer implements \IteratorAggregate
     {
         return $this->readers->getKeys();
     }
-}
+}

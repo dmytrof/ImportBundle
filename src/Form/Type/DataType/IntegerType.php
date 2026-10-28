@@ -19,8 +19,8 @@ class IntegerType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return BaseIntegerType::class;
     }
-}
+}

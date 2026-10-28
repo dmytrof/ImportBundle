@@ -69,7 +69,7 @@ class ImportFormData implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->data[$offset]);
     }
@@ -77,7 +77,7 @@ class ImportFormData implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->offsetExists($offset) ? $this->data[$offset]: null;
     }
@@ -85,7 +85,7 @@ class ImportFormData implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->data[$offset] = $value;
     }
@@ -93,7 +93,7 @@ class ImportFormData implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->data[$offset]);
     }
@@ -103,7 +103,7 @@ class ImportFormData implements \ArrayAccess
      * @param string $name
      * @return mixed|null
      */
-    public function getOption(string $name)
+    public function getOption(string $name): mixed
     {
         return $this->hasOption($name) ? $this->options[$name] : null;
     }

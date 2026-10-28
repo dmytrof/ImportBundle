@@ -70,7 +70,7 @@ class ImportersContainer implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->importers->getIterator();
     }
@@ -136,4 +136,4 @@ class ImportersContainer implements \IteratorAggregate
     {
         return $this->importers->getKeys();
     }
-}
+}

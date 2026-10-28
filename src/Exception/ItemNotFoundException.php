@@ -16,13 +16,7 @@ use Dmytrof\ImportBundle\Exception;
 
 class ItemNotFoundException extends NotFoundException implements Exception
 {
-    /**
-     * ItemNotFoundException constructor.
-     * @param string $message
-     * @param int $code
-     * @param \Throwable|null $previous
-     */
-    public function __construct($message = "Item not found", $code = 0, \Throwable $previous = null)
+    public function __construct($message = "Item not found", $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

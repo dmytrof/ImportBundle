@@ -18,14 +18,14 @@ class ImportedLinkType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'compound' => false,
         ));
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'dmytrof_import_task_link';
     }
@@ -33,8 +33,8 @@ class ImportedLinkType extends AbstractType
 //    /**
 //     * {@inheritdoc}
 //     */
-//    public function getParent()
+//    public function getParent(): ?string
 //    {
 //        return TextType::class;
 //    }
-}
+}

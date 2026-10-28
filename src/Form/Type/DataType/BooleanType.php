@@ -20,7 +20,7 @@ class BooleanType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'false_values' => [null, 0, '0'],
@@ -30,8 +30,8 @@ class BooleanType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CheckboxType::class;
     }
-}
+}

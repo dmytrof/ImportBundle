@@ -20,14 +20,14 @@ class HashIdFieldsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'id_fields_delimiter' => ImporterOptions::getIdFieldsDelimiter(),
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['idFieldsDelimiter'] = $options['id_fields_delimiter'];
     }
@@ -35,7 +35,7 @@ class HashIdFieldsType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
@@ -43,8 +43,8 @@ class HashIdFieldsType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'dmytrof_import_task_importer_options_hash_id_fields';
     }
-}
+}

@@ -44,7 +44,7 @@ class TaskType extends AbstractType
     /**
 	 * {@inheritDoc}
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function configureOptions(OptionsResolver $resolver): void
 	{
 		$resolver->setDefaults([
 			'data_class' => $this->getManager()->getModelClass(),
@@ -55,7 +55,7 @@ class TaskType extends AbstractType
 	/**
 	 * {@inheritDoc}
 	 */
-	public function buildForm(FormBuilderInterface $builder, array $options)
+	public function buildForm(FormBuilderInterface $builder, array $options): void
 	{
 		$builder
             ->add('title', TextType::class, [
@@ -94,4 +94,4 @@ class TaskType extends AbstractType
             ])
 		;
 	}
-}
+}

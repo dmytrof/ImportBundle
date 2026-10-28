@@ -20,7 +20,7 @@ class DateTimeType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->resetViewTransformers();
         $builder->addViewTransformer(new ValueToDateTimeTransformer());
@@ -29,8 +29,8 @@ class DateTimeType extends AbstractType
     /**
      * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
-}
+}

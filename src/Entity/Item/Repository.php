@@ -21,10 +21,6 @@ class Repository extends EntityRepository implements EntityRepositoryInterface
 
     /**
      * Returns imported item
-     * @param int $taskId
-     * @param string $entryId
-     * @param string|null $id
-     * @return Item|null
      */
     public function getImportedItem(int $taskId, string $entryId, ?string $id = null): ?Item
     {
@@ -44,11 +40,9 @@ class Repository extends EntityRepository implements EntityRepositoryInterface
             throw $e;
         }
     }
+
     /**
      * Returns scheduled import tasks
-     * @param int $batch
-     * @param int|null $taskId
-     * @return array
      */
     public function getScheduledImportItems(int $batch = 100, ?int $taskId = null): array
     {

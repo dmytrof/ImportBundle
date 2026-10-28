@@ -20,14 +20,14 @@ class PathToDataType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'path_delimiter' => ImporterOptions::getPathDelimiter(),
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['pathDelimiter'] = $options['path_delimiter'];
     }
@@ -35,7 +35,7 @@ class PathToDataType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
@@ -43,8 +43,8 @@ class PathToDataType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'dmytrof_import_task_importer_options_data_path';
     }
-}
+}

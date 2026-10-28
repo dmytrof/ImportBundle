@@ -315,6 +315,16 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /**
+     * Checks if row is empty
+     * @param array $row
+     * @return bool
+     */
+    protected function isEmptyRow(array $row): bool
+    {
+        return empty(array_filter($row));
+    }
+
+    /**
      * Dumps imported data to file
      * @param iterable $data
      * @param array $options

@@ -16,15 +16,8 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class ValueToIntegerTransformer implements DataTransformerInterface
 {
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
-    /**
-     * ValueToIntegerTransformer constructor.
-     * @param array $options
-     */
     public function __construct(array $options)
     {
         $this->options = $options;
@@ -32,20 +25,16 @@ class ValueToIntegerTransformer implements DataTransformerInterface
 
     /**
      * Returns option
-     * @param string $name
-     * @return mixed|null
      */
-    protected function getOption(string $name)
+    protected function getOption(string $name): mixed
     {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
     /**
      * Transforms value
-     * @param $value
-     * @return int
      */
-    protected function transformValue($value)
+    protected function transformValue($value): mixed
     {
         return (int) (string) $value;
     }
@@ -53,7 +42,7 @@ class ValueToIntegerTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($data)
+    public function transform(mixed $data): mixed
     {
         if ($data instanceof \Traversable || is_array($data)) {
             $values = [];
@@ -70,7 +59,7 @@ class ValueToIntegerTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($data)
+    public function reverseTransform(mixed $data): mixed
     {
         if ($this->getOption('multiple')) {
             $collection = new ArrayCollection();

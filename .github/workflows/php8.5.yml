@@ -1,6 +1,6 @@
 name: PHP8.5 Composer v2
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -8,21 +8,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-      
+    - uses: actions/checkout@v4
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.5'
+        tools: composer:v2
 
     - name: PHP version
       run: php --version
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
+    - name: Validate composer.json
+      run: composer validate --strict
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --prefer-dist --no-progress
+
+    - name: Lint PHP files
+      run: find src -name '*.php' -print0 | xargs -0 -n1 php -l
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md

@@ -246,7 +246,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($entity)
+    public function transform(mixed $entity): mixed
     {
         if ($this->multiple) {
             $entity = is_iterable($entity) ? $entity : [$entity];
@@ -265,7 +265,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($value)
+    public function reverseTransform(mixed $value): mixed
     {
         if ($this->multiple) {
             $value = is_iterable($value) ? $value : [$value];
@@ -295,10 +295,8 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Creates new entity
-     * @param string $value
-     * @return mixed
      */
-    protected function createNewEntity(string $value)
+    protected function createNewEntity(string $value): object
     {
         $entity = ($this->getRepository() instanceof EntityRepositoryInterface) ? $this->getRepository()->createNew() : new $this->entityClass();
         $entity->{'set'.(new Inflector(new NoopWordInflector(), new NoopWordInflector()))->classify($this->entityProperty)}($value);

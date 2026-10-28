@@ -22,7 +22,7 @@ class ImportItemStatusType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'choices' => array_flip(Item::getStatusesTitles()),
@@ -35,7 +35,7 @@ class ImportItemStatusType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new ValueToIntegerTransformer($options));
     }
@@ -43,8 +43,8 @@ class ImportItemStatusType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
-}
+}

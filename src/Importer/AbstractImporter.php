@@ -365,14 +365,14 @@ abstract class AbstractImporter implements ImporterInterface
      * @param string|null $labelPrefix
      * @return ImportableFields
      */
-    protected function addImportableFields(ImportableFields $fields, FormInterface $form, string $prefix = null, string $labelPrefix = null)
+    protected function addImportableFields(ImportableFields $fields, FormInterface $form, ?string $prefix = null, ?string $labelPrefix = null): ImportableFields
     {
         /** @var Form $field */
         foreach ($form as $field) {
             if ($field->getConfig()->getCompound() && $field->getConfig()->getDataClass()) {
-                $this->addImportableFields($fields, $field, $prefix.$field->getName().static::COMPOUND_FIELD_NAME_DELIMITER, $this->getTranslator()->trans($field->getConfig()->getOption('label')).' > ');
+                $this->addImportableFields($fields, $field, $prefix.$field->getName().static::COMPOUND_FIELD_NAME_DELIMITER, $this->getTranslator()->trans((string) $field->getConfig()->getOption('label')).' > ');
             } else {
-                $fields->add(new ImportableField($prefix.$field->getName(), $labelPrefix.$this->getTranslator()->trans($field->getConfig()->getOption('label'))));
+                $fields->add(new ImportableField($prefix.$field->getName(), $labelPrefix.$this->getTranslator()->trans((string) $field->getConfig()->getOption('label'))));
             }
         }
         return $fields;
@@ -550,7 +550,7 @@ abstract class AbstractImporter implements ImporterInterface
     /**
      * Some actions before import data
      */
-    protected function beforeImportData()
+    protected function beforeImportData(): void
     {
 
     }
@@ -558,7 +558,7 @@ abstract class AbstractImporter implements ImporterInterface
     /**
      * Some actions after import data
      */
-    protected function afterImportData()
+    protected function afterImportData(): void
     {
 
     }
@@ -1008,9 +1008,8 @@ abstract class AbstractImporter implements ImporterInterface
 
     /**
      * Returns item (entry) fields for hash ID
-     * @return string|array
      */
-    public function getItemHashIdFields()
+    public function getItemHashIdFields(): ?array
     {
         return $this->getOptions()->getItemHashIdFields();
     }
@@ -1023,7 +1022,7 @@ abstract class AbstractImporter implements ImporterInterface
     protected function getEntryId(array $item): string
     {
         $hashParams = [];
-        foreach ($this->getItemHashIdFields() as $field) {
+        foreach ((array) $this->getItemHashIdFields() as $field) {
             $value = $this->getEntryFieldValue($item, $field);
             if (!is_scalar($value)) {
                 $value = json_encode($value);
@@ -1059,7 +1058,7 @@ abstract class AbstractImporter implements ImporterInterface
      * @param null|string $field
      * @return array|mixed|null
      */
-    protected function getEntryFieldValue(array $item, ?string $field)
+    protected function getEntryFieldValue(array $item, ?string $field): mixed
     {
         if (is_null($field) || $field === '') {
             return null;
@@ -1081,7 +1080,7 @@ abstract class AbstractImporter implements ImporterInterface
      * @param array $data
      * @return array|mixed|null|string
      */
-    protected function getFieldImportedValue(ImportableField $field, array $data)
+    protected function getFieldImportedValue(ImportableField $field, array $data): mixed
     {
         if (is_null($field->getOptions()->getKey()) || !strlen($field->getOptions()->getKey())) {
             $value = isset($data[$field->getName()]) ? $data[$field->getName()] : null;

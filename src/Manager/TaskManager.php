@@ -86,7 +86,7 @@ class TaskManager extends AbstractDoctrineManager
      * @param InputInterface|null $input
      * @param array $options
      */
-    public function importTask(int $taskId, OutputInterface $output = null, InputInterface $input = null, array $options = []): void
+    public function importTask(int $taskId, ?OutputInterface $output = null, ?InputInterface $input = null, array $options = []): void
     {
         $task = $this->getTask($taskId);
         $io = new SymfonyStyle($input, $output);
@@ -104,4 +104,4 @@ class TaskManager extends AbstractDoctrineManager
     {
         return $this->getRepository()->getScheduledImportTasks();
     }
-}
+}

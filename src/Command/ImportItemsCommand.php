@@ -11,11 +11,13 @@
 
 namespace Dmytrof\ImportBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\{Command, LockableTrait};
 use Symfony\Component\Console\{Style\SymfonyStyle, Output\OutputInterface};
 use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Dmytrof\ImportBundle\Manager\ItemManager;
 
+#[AsCommand(name: 'dmytrof:import:items', description: 'Doing import of scheduled items.')]
 class ImportItemsCommand extends Command
 {
     use LockableTrait;
@@ -25,25 +27,15 @@ class ImportItemsCommand extends Command
      */
     private $itemManager;
 
-    /**
-     * ImportItemsCommand constructor.
-     * @param ItemManager $itemManager
-     * @param string|null $name
-     */
-    public function __construct(ItemManager $itemManager, string $name = null)
+    public function __construct(ItemManager $itemManager, ?string $name = null)
     {
         parent::__construct($name);
         $this->itemManager = $itemManager;
     }
 
-    /**
-	 * ImportCommand configuration.
-	 */
 	protected function configure(): void
 	{
 		$this
-			->setName('dmytrof:import:items')
-			->setDescription('Doing import of scheduled items.')
 			->setHelp('Allows to import data records from resources.')
 
 			->addOption('item', 'i', InputOption::VALUE_OPTIONAL, 'Import item id.')
@@ -58,27 +50,18 @@ class ImportItemsCommand extends Command
 
     /**
      * Returns item manager
-     * @return ItemManager
      */
 	protected function getItemManager(): ItemManager
     {
-        return $this-$this->itemManager;
+        return $this->itemManager;
     }
 
-	/**
-	 * ImportCommand logic.
-	 *
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int|null|void
-	 * @throws \Exception
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
         $io = new SymfonyStyle($input, $output);
         if (!$this->lock()) {
             $io->warning('The command is already running in another process.');
-            return 0;
+            return Command::SUCCESS;
         }
         $startTime = microtime(true);
         $i=0;
@@ -101,7 +84,8 @@ class ImportItemsCommand extends Command
             }
 
             do {
-                $itemIds = $this->getItemManager()->getScheduledImportItems($input->getOption('batch'), $input->getOption('task'));
+                $taskId = $input->getOption('task');
+                $itemIds = $this->getItemManager()->getScheduledImportItems((int) $input->getOption('batch'), $taskId !== null ? (int) $taskId : null);
                 $itemsCount += $count = count($itemIds);
                 if ($count) {
                     if (!$i) {
@@ -124,13 +108,10 @@ class ImportItemsCommand extends Command
         }
         $io->note(sprintf('Done! Imported %s items. Memory usage: %01.2f Mb. Execution time: %01.1f sec', $i, memory_get_usage()/1000000, (microtime(true) - $startTime)));
         $this->release();
+
+        return Command::SUCCESS;
 	}
 
-    /**
-     * @param string $itemId
-     * @param OutputInterface $output
-     * @param InputInterface $input
-     */
     protected function importItem(string $itemId, OutputInterface $output, InputInterface $input): void
     {
         try {

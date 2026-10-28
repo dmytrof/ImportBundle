@@ -15,10 +15,8 @@ class ValueToStringTransformer extends ValueToIntegerTransformer
 {
     /**
      * Transforms value
-     * @param $value
-     * @return int
      */
-    protected function transformValue($value)
+    protected function transformValue(mixed $value): mixed
     {
         return (string) $value;
     }

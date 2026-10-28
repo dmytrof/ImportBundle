@@ -22,7 +22,7 @@ class ImportableFieldOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'path_delimiter' => ImporterOptions::getPathDelimiter(),
@@ -33,7 +33,7 @@ class ImportableFieldOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('key', TextType::class, [
@@ -51,7 +51,7 @@ class ImportableFieldOptionsType extends AbstractType
         ;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['pathDelimiter'] = $options['path_delimiter'];
     }
@@ -59,8 +59,8 @@ class ImportableFieldOptionsType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'dmytrof_import_task_importer_options_importable_field_options';
     }
-}
+}

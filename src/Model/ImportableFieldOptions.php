@@ -54,7 +54,7 @@ class ImportableFieldOptions implements \SplSubject, ArrayConvertibleModelInterf
     /**
      * {@inheritdoc}
      */
-    public function attach(\SplObserver $observer)
+    public function attach(\SplObserver $observer): void
     {
         $this->getObservers()->attach($observer);
     }
@@ -62,7 +62,7 @@ class ImportableFieldOptions implements \SplSubject, ArrayConvertibleModelInterf
     /**
      * {@inheritdoc}
      */
-    public function detach(\SplObserver $observer)
+    public function detach(\SplObserver $observer): void
     {
         $this->getObservers()->detach($observer);
     }
@@ -70,7 +70,7 @@ class ImportableFieldOptions implements \SplSubject, ArrayConvertibleModelInterf
     /**
      * {@inheritdoc}
      */
-    public function notify()
+    public function notify(): void
     {
         foreach ($this->getObservers() as $observer) {
             $observer->update($this);
@@ -139,4 +139,4 @@ class ImportableFieldOptions implements \SplSubject, ArrayConvertibleModelInterf
         $this->notify();
         return $this;
     }
-}
+}

@@ -79,26 +79,23 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Title
      * @var string
-     *
-     * @Assert\NotBlank
-     * @Assert\LessThanOrEqual(250)
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 250)]
     protected $title;
 
     /**
      * Unique code if needed
      * @var string
-     *
-     * @Assert\LessThanOrEqual(250)
      */
+    #[Assert\Length(max: 250)]
     protected $code;
 
     /**
      * Feed link
      * @var string
-     *
-     * @Assert\NotBlank(groups={Task::VALIDATION_GROUP_LINK_AND_PARSER})
      */
+    #[Assert\NotBlank(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
     protected $link;
 
     /**
@@ -119,9 +116,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Period
      * @var int
-     *
-     * @Assert\Choice(Task::PERIOD_CHOICES)
      */
+    #[Assert\Choice(choices: self::PERIOD_CHOICES)]
     protected $period;
 
     /**
@@ -151,9 +147,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Importer code
      * @var string
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $importerCode;
 
     /**
@@ -165,9 +160,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Importer options
      * @var ImporterOptionsInterface
-     *
-     * @Assert\Valid
      */
+    #[Assert\Valid]
     protected $importerOptions;
 
     /**
@@ -183,9 +177,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Reader code
      * @var string
-     *
-     * @Assert\NotBlank(groups={Task::VALIDATION_GROUP_LINK_AND_PARSER})
      */
+    #[Assert\NotBlank(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
     protected $readerCode;
 
     /**
@@ -197,9 +190,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Reader options
      * @var ReaderOptionsInterface
-     *
-     * @Assert\Valid(groups={Task::VALIDATION_GROUP_LINK_AND_PARSER})
      */
+    #[Assert\Valid(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
     protected $readerOptions;
 
     /**
@@ -529,8 +521,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     }
 
     /**
-     * Returns importer statistics
-     * @return ImporterOptionsInterface|null
+     * Returns import statistics
+     * @return ImportStatistics|null
      */
     public function getImportStatistics(): ?ImportStatistics
     {
@@ -557,8 +549,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     }
 
     /**
-     * Returns import statistics array ans json
-     * @return array|null
+     * Returns import statistics array as json
+     * @return string|null
      */
     public function getImportStatisticsStr(): ?string
     {
@@ -763,9 +755,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Validates reader code
      * @param ExecutionContextInterface $context
-     *
-     * @Assert\Callback(groups={Task::VALIDATION_GROUP_LINK_AND_PARSER})
      */
+    #[Assert\Callback(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
     public function validateReaderCode(ExecutionContextInterface $context): void
     {
         if ($this->getReadersContainer() && !$this->getReadersContainer()->has($this->getReaderCode())) {
@@ -898,8 +889,8 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
     /**
      * Imports data from resource
      * @param TaskManager $manager
-     * @param SymfonyStyle|null $io
-     * @param Logger|null $logger
+     * @param SymfonyStyle $io
+     * @param Logger $logger
      * @param array $options
      * @return $this
      */
@@ -991,7 +982,7 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
      * @param SymfonyStyle|null $io
      * @return ImportedData
      */
-    public function getDataFromLink(string $link = null, array $options = [], ?SymfonyStyle $io = null): ImportedData
+    public function getDataFromLink(?string $link = null, array $options = [], ?SymfonyStyle $io = null): ImportedData
     {
         $options += ['exampleData' => false];
         if (!$this->getReader()) {

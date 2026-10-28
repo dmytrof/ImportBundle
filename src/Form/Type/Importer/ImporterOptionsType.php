@@ -21,7 +21,7 @@ class ImporterOptionsType extends AbstractType
     /**
 	 * {@inheritDoc}
 	 */
-	public function configureOptions(OptionsResolver $resolver)
+	public function configureOptions(OptionsResolver $resolver): void
 	{
         $resolver->setRequired('importable_fields');
         $resolver->setAllowedTypes('importable_fields', [ImportableFields::class]);
@@ -38,7 +38,7 @@ class ImporterOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-	public function buildForm(FormBuilderInterface $builder, array $options)
+	public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('dataPath', PathToDataType::class, [
@@ -59,4 +59,4 @@ class ImporterOptionsType extends AbstractType
             ])
         ;
     }
-}
+}

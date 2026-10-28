@@ -55,7 +55,7 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
     /**
      * {@inheritDoc}
      */
-    public function add($element)
+    public function add($element): void
     {
         throw new ImportableFieldsOptionsException('Unable to add new elements. Please, use set() method instead');
     }
@@ -117,7 +117,7 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
     /**
      * {@inheritdoc}
      */
-    public function attach(\SplObserver $observer)
+    public function attach(\SplObserver $observer): void
     {
         $this->getObservers()->attach($observer);
     }
@@ -125,7 +125,7 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
     /**
      * {@inheritdoc}
      */
-    public function detach(\SplObserver $observer)
+    public function detach(\SplObserver $observer): void
     {
         $this->getObservers()->detach($observer);
     }
@@ -133,10 +133,10 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
     /**
      * {@inheritdoc}
      */
-    public function notify()
+    public function notify(): void
     {
         foreach ($this->getObservers() as $observer) {
             $observer->update($this);
         }
     }
-}
+}

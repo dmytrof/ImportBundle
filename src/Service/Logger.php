@@ -12,6 +12,7 @@
 namespace Dmytrof\ImportBundle\Service;
 
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Level;
 use Monolog\Logger as BaseLogger;
 
 class Logger extends BaseLogger
@@ -27,10 +28,12 @@ class Logger extends BaseLogger
         parent::__construct($name);
 
         $filename = join('/', [$logsDir, $name, $env]).'.log';
-        $handler = new RotatingFileHandler($filename, 20, Logger::INFO, true, 0664);
+        // Monolog 3 uses the Level enum, Monolog 2 uses integer constants
+        $level = class_exists(Level::class) ? Level::Info : BaseLogger::INFO;
+        $handler = new RotatingFileHandler($filename, 20, $level, true, 0664);
         $this
             ->pushHandler($handler)
             ->useMicrosecondTimestamps(false)
         ;
     }
-}
+}

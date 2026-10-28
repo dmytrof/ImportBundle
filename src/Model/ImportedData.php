@@ -133,8 +133,8 @@ class ImportedData implements \Countable
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
-        return ($this->isDataInRoot()) ? count($this->data) : null;
+        return ($this->isDataInRoot()) ? count($this->data) : 0;
     }
-}
+}

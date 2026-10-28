@@ -18,7 +18,7 @@ class ValueToDateTimeTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($date)
+    public function transform(mixed $date): mixed
     {
         if ($date instanceof \DateTimeInterface) {
             return $date->format(\DateTimeInterface::ATOM);
@@ -29,11 +29,11 @@ class ValueToDateTimeTransformer implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($dateStr)
+    public function reverseTransform(mixed $dateStr): mixed
     {
         if ($dateStr instanceof \DateTimeInterface) {
-            $dateStr->setTimezone((new \DateTime())->getTimezone());
-            return $dateStr;
+            // setTimezone() returns a new instance for \DateTimeImmutable
+            return $dateStr->setTimezone((new \DateTime())->getTimezone());
         }
         try {
             $dateStr = (string) $dateStr;
@@ -47,4 +47,4 @@ class ValueToDateTimeTransformer implements DataTransformerInterface
             return null;
         }
     }
-}
+}

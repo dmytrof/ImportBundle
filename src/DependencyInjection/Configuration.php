@@ -15,10 +15,7 @@ use Symfony\Component\Config\Definition\{Builder\TreeBuilder, ConfigurationInter
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('dmytrof_import');
 

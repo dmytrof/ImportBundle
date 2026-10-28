@@ -36,9 +36,8 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     /**
      * Entry (item) hash id fields
      * @var array
-     *
-     * @Assert\Count(min=1)
      */
+    #[Assert\Count(min: 1)]
     protected $itemHashIdFields;
 
     /**
@@ -105,7 +104,7 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     /**
      * {@inheritdoc}
      */
-    public function attach(\SplObserver $observer)
+    public function attach(\SplObserver $observer): void
     {
         $this->getObservers()->attach($observer);
     }
@@ -113,7 +112,7 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     /**
      * {@inheritdoc}
      */
-    public function detach(\SplObserver $observer)
+    public function detach(\SplObserver $observer): void
     {
         $this->getObservers()->detach($observer);
     }
@@ -121,7 +120,7 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     /**
      * {@inheritdoc}
      */
-    public function notify()
+    public function notify(): void
     {
         foreach ($this->getObservers() as $observer) {
             $observer->update($this);
@@ -173,9 +172,8 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     /**
      * Returns item hash id fields as string
      * @return string|null
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     public function getItemHashIdFieldsStr(): ?string
     {
         return join($this->getIdFieldsDelimiter(), (array) $this->getItemHashIdFields());
@@ -336,4 +334,4 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
 
         return $this;
     }
-}
+}

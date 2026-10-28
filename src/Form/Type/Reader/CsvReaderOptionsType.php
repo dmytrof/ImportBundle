@@ -21,7 +21,7 @@ class CsvReaderOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => CsvReaderOptions::class,
@@ -32,7 +32,7 @@ class CsvReaderOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('hasHeadingRow', CheckboxType::class, [
@@ -61,8 +61,8 @@ class CsvReaderOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return AbstractReaderOptionsType::class;
     }
-}
+}

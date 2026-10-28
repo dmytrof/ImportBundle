@@ -57,7 +57,7 @@ class ReaderDefinitionType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ReaderDefinition::class,
@@ -68,7 +68,7 @@ class ReaderDefinitionType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('code', ReaderType::class, [
@@ -90,7 +90,7 @@ class ReaderDefinitionType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['parseLinkUri'] = $this->getRouter()->generate('api_import_data_v1_post_parse_link');
     }
@@ -98,8 +98,8 @@ class ReaderDefinitionType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'dmytrof_import_task_reader_definition';
     }
-}
+}

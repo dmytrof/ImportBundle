@@ -83,7 +83,7 @@ class ImportedDataFile extends ImportedData implements \IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         $file = $this->getFileObject();
         $file->seek(PHP_INT_MAX);
@@ -130,8 +130,8 @@ class ImportedDataFile extends ImportedData implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->getFileObject();
     }
-}
+}

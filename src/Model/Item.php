@@ -60,49 +60,43 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     /**
      * Task id
      * @var integer
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $taskId;
 
     /**
      * Entry id
      * @var string
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $entryId;
 
     /**
      * Status
      * @var int
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $statusId;
 
     /**
      * Data hash
      * @var string
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $dataHash;
 
     /**
      * Config hash
      * @var string
-     *
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     protected $configHash;
 
     /**
      * Entry data
      * @var array
-     *
-     * @Assert\Count(min=1)
      */
+    #[Assert\Count(min: 1)]
     protected $data;
 
     /**
@@ -142,7 +136,7 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
      */
     public static function generateId(?int $taskId, ?string $entryId, ?string $dataHash): string
     {
-        return join('_', [$taskId, $entryId, substr($dataHash, 0, 8)]);
+        return join('_', [$taskId, $entryId, substr((string) $dataHash, 0, 8)]);
     }
 
     /**
@@ -190,8 +184,8 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     }
 
     /**
-     * Returns task
-     * @return Task|null
+     * Returns task id
+     * @return int|null
      */
     public function getTaskId(): ?int
     {
@@ -379,7 +373,7 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
      * @param null $defaultValue
      * @return mixed|null
      */
-    public function getDataValue(string $key, $defaultValue = null)
+    public function getDataValue(string $key, $defaultValue = null): mixed
     {
         return isset($this->data[$key]) ? $this->data[$key] : $defaultValue;
     }
