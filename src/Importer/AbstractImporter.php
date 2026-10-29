@@ -544,6 +544,11 @@ abstract class AbstractImporter implements ImporterInterface
     public function importItem(Item $item): ImporterInterface
     {
         $this->importFromItem($item, true);
+        if ($this->getManager() instanceof AbstractDoctrineManager) {
+            $this->getManager()->getManager()->flush();
+        }
+        $this->saveImportedItem($item, true);
+
         return $this;
     }
 
@@ -1088,8 +1093,8 @@ abstract class AbstractImporter implements ImporterInterface
             $value = $this->getEntryFieldValue($data, $field->getOptions()->getKey());
 
             // Check fallbackKey
-            if (empty($value) && !empty($field->getOptions()->getKey())) {
-                $fallbackKeys = (array) $field->getOptions()->getKey();
+            if (empty($value) && !empty($field->getOptions()->getFallbackKey())) {
+                $fallbackKeys = (array) $field->getOptions()->getFallbackKey();
 
                 foreach ($fallbackKeys as $key) {
                     $value = $this->getEntryFieldValue($data, $key);

@@ -5,9 +5,10 @@ This bundle helps you to import data (JSON, XML, RSS, CSV) into your Symfony app
 
 ## Requirements
 
-* PHP 8.3 or higher
-* Symfony 6.4 or higher
-* Doctrine ORM 2.14+ with DoctrineBundle 2.10+
+* PHP 8.4 or higher
+* Symfony 6.4, 7.x or 8.x
+* Doctrine ORM 3 with DoctrineBundle 2.13+ or 3.x
+* dmytrof/models-management-bundle 1.12+
 
 ## Installation
 
@@ -70,3 +71,21 @@ Import scheduled items:
 * Custom form types, data transformers, readers and importers extending the bundle
   classes must use return types compatible with Symfony 6.4
   (e.g. `configureOptions(): void`, `getParent(): ?string`, `transform(mixed $value): mixed`).
+
+## Upgrading to PHP 8.4 / Doctrine ORM 3
+
+* `EntityManager::merge()` (removed in ORM 3) is no longer used: after an import the task (and an item failed
+  to import) is re-fetched from the entity manager when the importer has detached it.
+  `PostImportTaskEvent` receives the managed task.
+* `Entity\Task\Task::$active` is typed `bool` and `Entity\Item\Item::$target` is typed `?array`
+  (as in ModelsManagementBundle 1.12 traits): redeclare them with the same types in your subclasses.
+* `ImportableFields::set()`, `ImportableFieldsOptions::set()` and `add()` follow Doctrine Collections 2/3
+  signatures (`set(string|int $key, mixed $value): void`): they are not fluent anymore.
+* Services use `!tagged_iterator` (the `!tagged` YAML tag was removed in Symfony 8).
+* `symfony/translation` is required (readers and importers use the translator).
+* On PHP 8.4 with DoctrineBundle 2.x enable native lazy objects:
+
+        # config/packages/doctrine.yaml
+        doctrine:
+            orm:
+                enable_native_lazy_objects: true

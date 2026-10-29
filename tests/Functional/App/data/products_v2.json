@@ -1,0 +1,6 @@
+{"items": [
+  {"sku": "A1", "name": "Green apple", "cost": "1.75"},
+  {"sku": "B2", "name": "Banana", "cost": "0.25"},
+  {"sku": "B2", "name": "Banana duplicate", "cost": "0.30"},
+  {"sku": "C3", "name": "Cherry", "cost": "3"}
+]}

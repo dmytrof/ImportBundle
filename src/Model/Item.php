@@ -11,6 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Logger;
 use Dmytrof\ModelsManagementBundle\Model\{ActiveModelInterface, Traits\ActiveModelTrait};
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleModelTrait};
@@ -437,6 +438,18 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
     }
 
     /**
+     * Returns the instance managed by the entity manager (EntityManager::merge() was removed in Doctrine ORM 3)
+     */
+    protected function getManagedInstance(EntityManagerInterface $entityManager): static
+    {
+        if (!$this->getId() || $entityManager->contains($this)) {
+            return $this;
+        }
+
+        return $entityManager->find(static::class, $this->getId()) ?? $this;
+    }
+
+    /**
      * Imports data from resource
      * @param ItemManager $manager
      * @param SymfonyStyle|null $io
@@ -485,7 +498,8 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
                 if ($io) {
                     $io->error($e->getMessage());
                 }
-                $item = $this->getId() ? $this : $manager->getManager()->merge($this);
+                // The importer may clear the entity manager: the item may be detached here
+                $item = $this->getManagedInstance($manager->getManager());
                 $item
                     ->setStatusId(self::STATUS_ERROR)
                     ->setErrors([$e->getMessage()])

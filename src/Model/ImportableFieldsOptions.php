@@ -17,11 +17,6 @@ use Dmytrof\ImportBundle\Exception\{ImportableFieldsOptionsException, InvalidArg
 class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \SplSubject
 {
     /**
-     * @var ImportableFieldOptions[]
-     */
-    protected $elements;
-
-    /**
      * @var \SplObjectStorage
      */
     protected $observers;
@@ -39,7 +34,7 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
     /**
      * {@inheritDoc}
      */
-    public function set($key, $value): self
+    public function set(string|int $key, mixed $value): void
     {
         if (!$value instanceof ImportableFieldOptions && !is_null($value)) {
             throw new InvalidArgumentException(sprintf('Element must be %s. Got: %s', ImportableFieldOptions::class, gettype($value)));
@@ -47,27 +42,30 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
         if (!is_null($value)) {
             $value->attach($this);
             parent::set($key, $value);
-            return $this;
         }
-        return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function add($element): void
+    public function add(mixed $element): void
     {
         throw new ImportableFieldsOptionsException('Unable to add new elements. Please, use set() method instead');
     }
 
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->get($name);
     }
 
-    public function __set($name, $value)
+    public function __isset(string $name): bool
     {
-        return $this->set($name, $value);
+        return $this->containsKey($name);
+    }
+
+    public function __set(string $name, mixed $value): void
+    {
+        $this->set($name, $value);
     }
 
     /**
@@ -139,4 +137,4 @@ class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \
             $observer->update($this);
         }
     }
-}
+}

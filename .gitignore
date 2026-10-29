@@ -2,3 +2,4 @@
 /phpunit.xml
 /composer.phar
 .idea/
+/tests/Functional/App/config/reference.php

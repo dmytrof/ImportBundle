@@ -107,12 +107,12 @@ class ImportersContainer implements \IteratorAggregate
 
     /**
      * Checks if container has importer with code
-     * @param string $code
+     * @param string|null $code
      * @return bool
      */
-    public function has(string $code): bool
+    public function has(?string $code): bool
     {
-        return $this->importers->containsKey($code);
+        return $code !== null && $this->importers->containsKey($code);
     }
 
     /**

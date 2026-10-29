@@ -252,7 +252,7 @@ class ImportStatistics implements ArrayConvertibleModelInterface
      */
     public function incrementDeleted(int $count = 1, bool $incrementAll = false): self
     {
-        $this->skipped += $count;
+        $this->deleted += $count;
         if ($incrementAll) {
             $this->incrementAll($count);
         }
@@ -273,4 +273,4 @@ class ImportStatistics implements ArrayConvertibleModelInterface
         }
         return $this;
     }
-}
+}

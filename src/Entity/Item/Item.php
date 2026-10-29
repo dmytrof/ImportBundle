@@ -49,5 +49,5 @@ class Item extends Model
     protected $configHash;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $target;
+    protected ?array $target = null;
 }

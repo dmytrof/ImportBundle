@@ -233,6 +233,21 @@ abstract class AbstractReader implements ReaderInterface
     }
 
     /**
+     * Returns response media type (Content-Type without parameters), lower-cased
+     * @param ResponseInterface $response
+     * @return string|null
+     */
+    protected function getResponseMediaType(ResponseInterface $response): ?string
+    {
+        $contentType = $response->getHeaderLine('Content-Type');
+        if ($contentType === '') {
+            return null;
+        }
+
+        return strtolower(trim(explode(';', $contentType, 2)[0]));
+    }
+
+    /**
      * Checks if response has header with any value
      * @param ResponseInterface $response
      * @param string $headerName
@@ -334,7 +349,7 @@ abstract class AbstractReader implements ReaderInterface
     {
         try {
             $filesystem = new Filesystem();
-            $dataFileName = $filesystem->tempnam('/tmp','data');
+            $dataFileName = $filesystem->tempnam(sys_get_temp_dir(), 'data');
 
             $importedData = new ImportedDataFile($dataFileName);
 

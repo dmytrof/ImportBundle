@@ -72,6 +72,7 @@ class Task extends Model
     #[ORM\Column(name: 'reader_options', type: 'json', nullable: true)]
     protected $readerOptionsArr;
 
+    // Typed as in ActiveModelTrait of ModelsManagementBundle
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => true])]
-    protected $active;
+    protected bool $active = true;
 }

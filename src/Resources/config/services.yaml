@@ -17,12 +17,12 @@ services:
     Dmytrof\ImportBundle\Service\ImportersContainer:
         public: false
         arguments:
-            $importers: !tagged 'dmytrof.import.importer'
+            $importers: !tagged_iterator 'dmytrof.import.importer'
 
     Dmytrof\ImportBundle\Service\ReadersContainer:
         public: false
         arguments:
-            $readers: !tagged 'dmytrof.import.reader'
+            $readers: !tagged_iterator 'dmytrof.import.reader'
 
     Dmytrof\ImportBundle\Service\Logger:
         arguments:

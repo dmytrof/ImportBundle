@@ -11,17 +11,17 @@
         }
     ],
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "dmytrof/models-management-bundle": "^1.7",
-        "doctrine/collections": "^1.6 || ^2.0",
-        "doctrine/doctrine-bundle": "^2.10",
+        "dmytrof/models-management-bundle": "^1.12",
+        "doctrine/collections": "^2.2 || ^3.0",
+        "doctrine/doctrine-bundle": "^2.13 || ^3.0",
         "doctrine/inflector": "^2.0",
-        "doctrine/orm": "^2.14 || ^3.0",
-        "doctrine/persistence": "^3.1",
-        "gedmo/doctrine-extensions": "^3.11",
+        "doctrine/orm": "^3.0",
+        "doctrine/persistence": "^3.1 || ^4.0",
+        "gedmo/doctrine-extensions": "^3.16",
         "guzzlehttp/guzzle": "^7.0",
         "laminas/laminas-feed": "^2.22",
         "laminas/laminas-json": "^3.6",
@@ -44,11 +44,15 @@
         "symfony/monolog-bundle": "^3.10 || ^4.0",
         "symfony/options-resolver": "^6.4 || ^7.0 || ^8.0",
         "symfony/routing": "^6.4 || ^7.0 || ^8.0",
+        "symfony/translation": "^6.4 || ^7.0 || ^8.0",
         "symfony/translation-contracts": "^3.0",
-        "symfony/validator": "^6.4 || ^7.0 || ^8.0"
+        "symfony/validator": "^6.4 || ^7.0 || ^8.0",
+        "symfony/yaml": "^6.4 || ^7.0 || ^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6 || ^10.5"
+        "ext-pdo_sqlite": "*",
+        "phpunit/phpunit": "^11.5",
+        "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0"
     },
     "autoload": {
         "psr-4": {

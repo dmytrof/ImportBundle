@@ -73,7 +73,7 @@ class ReadersContainer implements \IteratorAggregate
      */
     public function has(?string $code): bool
     {
-        return $this->readers->containsKey($code);
+        return $code !== null && $this->readers->containsKey($code);
     }
 
     /**

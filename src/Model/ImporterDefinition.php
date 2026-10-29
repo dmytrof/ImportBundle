@@ -98,6 +98,25 @@ class ImporterDefinition
     }
 
     /**
+     * Magic method for virtual properties of importer options (needed by Symfony PropertyAccess)
+     * @param $property
+     * @return bool
+     */
+    public function __isset($property): bool
+    {
+        if ($property === $this->getCode()) {
+            return true;
+        }
+        foreach ($this->getTask()->getImportersContainer() ?? [] as $item) {
+            if ($property === $item->getCode()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Magic method for virtual properties of importer options
      * @param $property
      * @param $value
@@ -108,4 +127,4 @@ class ImporterDefinition
             $this->setOptions($value);
         }
     }
-}
+}

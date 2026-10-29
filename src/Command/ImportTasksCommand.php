@@ -62,25 +62,28 @@ class ImportTasksCommand extends Command
             $output->writeln('The command is already running in another process.');
             return Command::SUCCESS;
         }
-        if ($input->getOption('task')) {
-            $this->importTask($input->getOption('task'), $output, $input);
-        } else {
-            $taskIds = [];
-            foreach ($this->getTaskManager()->getScheduledImportTasks() as $task) {
-                $taskIds[] = $task->getId();
-            }
-            $tasksCount = count($taskIds);
-            $io = new SymfonyStyle($input, $output);
-            if ($tasksCount) {
-                $io->note(sprintf('There are %s scheduled tasks', $tasksCount));
-                foreach ($taskIds as $taskId) {
-                    $this->importTask($taskId, $output, $input);
-                }
+        try {
+            if ($input->getOption('task')) {
+                $this->importTask($input->getOption('task'), $output, $input);
             } else {
-                $io->note('No scheduled tasks for now');
+                $taskIds = [];
+                foreach ($this->getTaskManager()->getScheduledImportTasks() as $task) {
+                    $taskIds[] = $task->getId();
+                }
+                $tasksCount = count($taskIds);
+                $io = new SymfonyStyle($input, $output);
+                if ($tasksCount) {
+                    $io->note(sprintf('There are %s scheduled tasks', $tasksCount));
+                    foreach ($taskIds as $taskId) {
+                        $this->importTask($taskId, $output, $input);
+                    }
+                } else {
+                    $io->note('No scheduled tasks for now');
+                }
             }
+        } finally {
+            $this->release();
         }
-        $this->release();
 
         return Command::SUCCESS;
 	}

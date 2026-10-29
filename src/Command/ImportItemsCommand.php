@@ -63,51 +63,60 @@ class ImportItemsCommand extends Command
             $io->warning('The command is already running in another process.');
             return Command::SUCCESS;
         }
-        $startTime = microtime(true);
-        $i=0;
-        if ($input->getOption('item')) {
-            $this->importItem($input->getOption('item'), $output, $input);
-            $i++;
-        } else {
-            $itemsCount = 0;
-            $break = false;
-            $checkBreak = function () {return false;};
-            if ($input->getOption('period')) {
-                $period = ((int) $input->getOption('period')) * 0.99; //seconds
-                $checkBreak = function () use ($period, $startTime, $input, $io) {
-                    if ((microtime(true) - $startTime) >= $period) {
-                        $io->note(sprintf('Period time\'s up (%s seconds)!', $input->getOption('period')));
-                        return true;
-                    }
-                    return false;
-                };
-            }
-
-            do {
-                $taskId = $input->getOption('task');
-                $itemIds = $this->getItemManager()->getScheduledImportItems((int) $input->getOption('batch'), $taskId !== null ? (int) $taskId : null);
-                $itemsCount += $count = count($itemIds);
-                if ($count) {
-                    if (!$i) {
-                        $io->note(sprintf('There are %s scheduled items', $itemsCount));
-                    }
-                    foreach ($itemIds as $itemId) {
-                        $break = $checkBreak->call($this);
-                        if ($break) {
-                            break;
+        try {
+            $startTime = microtime(true);
+            $i=0;
+            if ($input->getOption('item')) {
+                $this->importItem($input->getOption('item'), $output, $input);
+                $i++;
+            } else {
+                $itemsCount = 0;
+                $break = false;
+                // --all is VALUE_OPTIONAL, so a bare "--all" has a null value: check for its presence
+                $all = $input->hasParameterOption(['--all', '-a']);
+                $processedIds = [];
+                $checkBreak = function () {return false;};
+                if ($input->getOption('period')) {
+                    $period = ((int) $input->getOption('period')) * 0.99; //seconds
+                    $checkBreak = function () use ($period, $startTime, $input, $io) {
+                        if ((microtime(true) - $startTime) >= $period) {
+                            $io->note(sprintf('Period time\'s up (%s seconds)!', $input->getOption('period')));
+                            return true;
                         }
-                        $io->text(sprintf('Importing %s/%s scheduled items. Memory usage: %01.2f Mb. Execution time: %01.1f sec', ++$i, $itemsCount, memory_get_usage()/1000000, (microtime(true) - $startTime)));
-                        $this->importItem($itemId, $output, $input);
-                    }
-                } else {
-                    if (!$i) {
-                        $io->note('No scheduled items for now');
-                    }
+                        return false;
+                    };
                 }
-            } while ($input->hasOption('all') && $count && !$break);
+
+                do {
+                    $taskId = $input->getOption('task');
+                    $itemIds = $this->getItemManager()->getScheduledImportItems((int) $input->getOption('batch'), $taskId !== null ? (int) $taskId : null);
+                    // Items that stay scheduled after import must not be processed again in the same run
+                    $itemIds = array_values(array_diff($itemIds, array_keys($processedIds)));
+                    $itemsCount += $count = count($itemIds);
+                    if ($count) {
+                        if (!$i) {
+                            $io->note(sprintf('There are %s scheduled items', $itemsCount));
+                        }
+                        foreach ($itemIds as $itemId) {
+                            $break = $checkBreak->call($this);
+                            if ($break) {
+                                break;
+                            }
+                            $io->text(sprintf('Importing %s/%s scheduled items. Memory usage: %01.2f Mb. Execution time: %01.1f sec', ++$i, $itemsCount, memory_get_usage()/1000000, (microtime(true) - $startTime)));
+                            $this->importItem($itemId, $output, $input);
+                            $processedIds[$itemId] = true;
+                        }
+                    } else {
+                        if (!$i) {
+                            $io->note('No scheduled items for now');
+                        }
+                    }
+                } while ($all && $count && !$break);
+            }
+            $io->note(sprintf('Done! Imported %s items. Memory usage: %01.2f Mb. Execution time: %01.1f sec', $i, memory_get_usage()/1000000, (microtime(true) - $startTime)));
+        } finally {
+            $this->release();
         }
-        $io->note(sprintf('Done! Imported %s items. Memory usage: %01.2f Mb. Execution time: %01.1f sec', $i, memory_get_usage()/1000000, (microtime(true) - $startTime)));
-        $this->release();
 
         return Command::SUCCESS;
 	}

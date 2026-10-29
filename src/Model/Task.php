@@ -11,6 +11,7 @@
 
 namespace Dmytrof\ImportBundle\Model;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Logger;
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleModelTrait};
 use Dmytrof\ModelsManagementBundle\Model\{ActiveModelInterface, Traits\ActiveModelTrait};
@@ -919,14 +920,15 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
 
             $importer->getLogger()->info('Importing finished!');
             $importer->getOutput()->success('Importing finished!');
-            $task = $manager->getManager()->merge($this);
+            // The importer clears the entity manager in batches: the task may be detached here
+            $task = $this->getManagedInstance($manager->getManager());
             $task
                 ->setInProgress(false)
                 ->setImportStatistics($importer->getImportStatistics())
             ;
             $manager->save($task);
             if ($this->getEventDispatcher()) {
-                $this->getEventDispatcher()->dispatch(new PostImportTaskEvent($this));
+                $this->getEventDispatcher()->dispatch(new PostImportTaskEvent($task));
             }
 
             return $task;
@@ -942,10 +944,26 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
                     $io->error($e->getMessage());
                 }
 
-                return $this->getId() ? $this : $manager->getManager()->merge($this);
+                return $this->getManagedInstance($manager->getManager());
             }
             throw $e;
         }
+    }
+
+    /**
+     * Returns the instance managed by the entity manager (EntityManager::merge() was removed in Doctrine ORM 3)
+     */
+    protected function getManagedInstance(EntityManagerInterface $entityManager): static
+    {
+        if (!$this->getId() || $entityManager->contains($this)) {
+            return $this;
+        }
+        $managed = $entityManager->find(static::class, $this->getId());
+        if ($managed instanceof static) {
+            $managed->setEventDispatcher($this->getEventDispatcher());
+        }
+
+        return $managed ?? $this;
     }
 
     /**

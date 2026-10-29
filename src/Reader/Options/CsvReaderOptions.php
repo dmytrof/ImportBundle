@@ -154,4 +154,4 @@ class CsvReaderOptions extends AbstractReaderOptions
         $this->notify();
         return $this;
     }
-}
+}

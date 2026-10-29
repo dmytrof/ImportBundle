@@ -31,7 +31,7 @@ class ImportableFields extends ArrayCollection
     /**
      * {@inheritDoc}
      */
-    public function set($key, $value): void
+    public function set(string|int $key, mixed $value): void
     {
         $this->add($value);
     }
@@ -39,7 +39,7 @@ class ImportableFields extends ArrayCollection
     /**
      * {@inheritDoc}
      */
-    public function add($element): void
+    public function add(mixed $element): void
     {
         if (!$element instanceof ImportableField) {
             throw new InvalidArgumentException(sprintf('Element must be %s. Got: %s', ImportableField::class, gettype($element)));

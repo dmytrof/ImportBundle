@@ -64,13 +64,13 @@ class CsvReader extends AbstractReader
 
         $response = $this->getLinkResponse($link, $options, $io);
 
-        if (!$this->hasResponseHeaderAnyValue($response, 'Content-type', ['text/csv', 'application/octet-stream'])) {
+        if (!in_array($this->getResponseMediaType($response), ['text/csv', 'application/octet-stream'], true)) {
             throw new ReaderException(sprintf('Invalid CSV data'));
         }
 
         try {
             $filesystem = new Filesystem();
-            $csvFileName = $filesystem->tempnam('/tmp','csv');
+            $csvFileName = $filesystem->tempnam(sys_get_temp_dir(), 'csv');
             $filesystem->dumpFile($csvFileName, $response->getBody()->getContents());
 
             $file = new \SplFileObject($csvFileName);
