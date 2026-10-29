@@ -56,154 +56,109 @@ class Task implements SimpleModelInterface, ActiveModelInterface, \SplObserver
         self::PERIOD_EVERY_24_HOURS,
     ];
 
-    /**
-     * @var ImportersContainer
-     */
-    protected $importersContainer;
+    protected ?ImportersContainer $importersContainer = null;
 
-    /**
-     * @var ReadersContainer
-     */
-    protected $readersContainer;
+    protected ?ReadersContainer $readersContainer = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     /**
      * ID
-     * @var int
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * Title
-     * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Length(max: 250)]
-    protected $title;
+    protected ?string $title = null;
 
     /**
      * Unique code if needed
-     * @var string
      */
     #[Assert\Length(max: 250)]
-    protected $code;
+    protected ?string $code = null;
 
     /**
      * Feed link
-     * @var string
      */
     #[Assert\NotBlank(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
-    protected $link;
+    protected ?string $link = null;
 
-    /**
-     * @var bool
-     */
-    protected $paginatedLink;
+    protected bool $paginatedLink = false;
 
-    /**
-     * @var string
-     */
-    protected $pageParameterInLink;
+    protected ?string $pageParameterInLink = null;
 
-    /**
-     * @var integer
-     */
-    protected $firstPageValue;
+    protected ?int $firstPageValue = null;
 
     /**
      * Period
-     * @var int
      */
     #[Assert\Choice(choices: self::PERIOD_CHOICES)]
-    protected $period;
+    protected ?int $period = null;
 
     /**
      * In progress now
-     * @var bool
      */
-    protected $inProgress;
+    protected bool $inProgress = false;
 
     /**
      * Date & time of last import
-     * @var \DateTime
      */
-    protected $importedAt;
+    protected ?\DateTime $importedAt = null;
 
     /**
      * Import statistics
-     * @var ImportStatistics
      */
-    protected $importStatistics;
+    protected ?ImportStatistics $importStatistics = null;
 
     /**
      * Import statistics array
-     * @var array
      */
-    protected $importStatisticsArr;
+    protected ?array $importStatisticsArr = null;
 
     /**
      * Importer code
-     * @var string
      */
     #[Assert\NotBlank]
-    protected $importerCode;
+    protected ?string $importerCode = null;
 
     /**
      * Importer options array
-     * @var array
      */
-    protected $importerOptionsArr;
+    protected ?array $importerOptionsArr = null;
 
     /**
      * Importer options
-     * @var ImporterOptionsInterface
      */
     #[Assert\Valid]
-    protected $importerOptions;
+    protected ?ImporterOptionsInterface $importerOptions = null;
 
-    /**
-     * @var ImporterInterface
-     */
-    protected $importer;
+    protected ?ImporterInterface $importer = null;
 
-    /**
-     * @var string
-     */
-    protected $importerOptionsHash;
+    protected ?string $importerOptionsHash = null;
 
     /**
      * Reader code
-     * @var string
      */
     #[Assert\NotBlank(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
-    protected $readerCode;
+    protected ?string $readerCode = null;
 
     /**
      * Reader options array
-     * @var array
      */
-    protected $readerOptionsArr;
+    protected ?array $readerOptionsArr = null;
 
     /**
      * Reader options
-     * @var ReaderOptionsInterface
      */
     #[Assert\Valid(groups: [self::VALIDATION_GROUP_LINK_AND_PARSER])]
-    protected $readerOptions;
+    protected ?ReaderOptionsInterface $readerOptions = null;
 
-    /**
-     * @var ReaderInterface
-     */
-    protected $reader;
+    protected ?ReaderInterface $reader = null;
 
-    /**
-     * @var bool
-     */
-    protected $forceImport = false;
+    protected bool $forceImport = false;
 
     /**
      * Task constructor.

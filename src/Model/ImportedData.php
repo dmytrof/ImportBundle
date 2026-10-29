@@ -15,21 +15,18 @@ class ImportedData implements \Countable
 {
     /**
      * Heading row
-     * @var array
      */
-    protected $headingRow;
+    protected ?array $headingRow = null;
 
     /**
      * Data
-     * @var array
      */
-    protected $data;
+    protected iterable $data;
 
     /**
      * Data is in root
-     * @var bool
      */
-    protected $dataInRoot = false;
+    protected bool $dataInRoot = false;
 
     /**
      * ImportedData constructor.

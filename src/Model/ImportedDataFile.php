@@ -15,25 +15,12 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ImportedDataFile extends ImportedData implements \IteratorAggregate
 {
-    /**
-     * @var string
-     */
-    protected $filename;
+    protected string $filename;
 
-    /**
-     * @var \SplFileObject
-     */
-    protected $fileObject;
+    protected ?\SplFileObject $fileObject = null;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
+    protected ?Filesystem $filesystem = null;
 
-    /**
-     * ImportedDataFile constructor.
-     * @param string $filename
-     */
     public function __construct(string $filename)
     {
         parent::__construct([]);
@@ -134,4 +121,4 @@ class ImportedDataFile extends ImportedData implements \IteratorAggregate
     {
         return $this->getFileObject();
     }
-}
+}

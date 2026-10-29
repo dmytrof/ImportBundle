@@ -15,23 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ImportFormData implements \ArrayAccess
 {
-    /**
-     * @var array
-     */
-    protected $data;
+    protected array $options = [];
 
-    /**
-     * @var array
-     */
-    protected $options = [];
-
-    /**
-     * ImportFormData constructor.
-     * @param array $data
-     */
-    public function __construct(array $data)
-    {
-        $this->data = $data;
+    public function __construct(
+        protected array $data,
+    ) {
     }
 
     /**

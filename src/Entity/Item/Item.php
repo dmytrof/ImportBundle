@@ -25,28 +25,28 @@ class Item extends Model
 
     #[ORM\Id]
     #[ORM\Column(type: 'string')]
-    protected $id;
+    protected ?string $id = null;
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    protected $taskId;
+    protected ?int $taskId = null;
 
     #[ORM\Column(type: 'string', nullable: false)]
-    protected $entryId;
+    protected ?string $entryId = null;
 
     #[ORM\Column(type: 'integer', nullable: false)]
-    protected $statusId;
+    protected ?int $statusId = null;
 
     #[ORM\Column(type: 'string', nullable: false)]
-    protected $dataHash;
+    protected ?string $dataHash = null;
 
     #[ORM\Column(type: 'json', nullable: false)]
-    protected $data;
+    protected ?array $data = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    protected $errors;
+    protected ?string $errors = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $configHash;
+    protected ?string $configHash = null;
 
     #[ORM\Column(type: 'json', nullable: true)]
     protected ?array $target = null;

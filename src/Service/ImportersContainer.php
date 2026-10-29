@@ -20,48 +20,24 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportersContainer implements \IteratorAggregate
 {
-    /**
-     * @var Collection|ImporterInterface[]
-     */
-	protected $importers;
+	protected Collection $importers;
 
-    /**
-     * @var TranslatorInterface
-     */
-	protected $translator;
-
-    /**
-     * @var ItemManager
-     */
-	protected $itemManager;
-
-    /**
-     * ImportersContainer constructor.
-     * @param TranslatorInterface $translator
-     * @param ItemManager $itemManager
-     * @param iterable $importers
-     */
-    public function __construct(TranslatorInterface $translator, ItemManager $itemManager, iterable $importers)
-    {
-        $this->translator = $translator;
-        $this->itemManager = $itemManager;
+    public function __construct(
+        protected TranslatorInterface $translator,
+        protected ItemManager $itemManager,
+        iterable $importers,
+    ) {
         $this->importers = new ArrayCollection();
         foreach ($importers as $importer) {
             $this->addImporter($importer);
         }
     }
 
-    /**
-     * @return TranslatorInterface
-     */
     protected function getTranslator(): TranslatorInterface
     {
         return $this->translator;
     }
 
-    /**
-     * @return ItemManager
-     */
     protected function getItemManager(): ItemManager
     {
         return $this->itemManager;
@@ -136,4 +112,4 @@ class ImportersContainer implements \IteratorAggregate
     {
         return $this->importers->getKeys();
     }
-}
+}

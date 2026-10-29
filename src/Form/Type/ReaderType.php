@@ -19,18 +19,9 @@ use Dmytrof\ImportBundle\Service\ReadersContainer;
 
 class ReaderType extends AbstractType
 {
-    /**
-     * @var ReadersContainer
-     */
-    protected $readersContainer;
-
-    /**
-     * ReaderType constructor.
-     * @param ReadersContainer $readersContainer
-     */
-    public function __construct(ReadersContainer $readersContainer)
-    {
-        $this->readersContainer = $readersContainer;
+    public function __construct(
+        protected ReadersContainer $readersContainer,
+    ) {
     }
 
     /**
@@ -60,4 +51,4 @@ class ReaderType extends AbstractType
     {
         return ChoiceType::class;
     }
-}
+}

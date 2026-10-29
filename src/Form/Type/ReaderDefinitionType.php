@@ -17,38 +17,17 @@ use Dmytrof\ImportBundle\{Model\ReaderDefinition, Reader\ReaderInterface, Servic
 
 class ReaderDefinitionType extends AbstractType
 {
-    /**
-     * @var ReadersContainer
-     */
-    protected $readersContainer;
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /**
-     * ReaderDefinitionType constructor.
-     * @param ReadersContainer $readersContainer
-     * @param RouterInterface $router
-     */
-    public function __construct(ReadersContainer $readersContainer, RouterInterface $router)
-    {
-        $this->readersContainer = $readersContainer;
-        $this->router = $router;
+    public function __construct(
+        protected ReadersContainer $readersContainer,
+        protected RouterInterface $router,
+    ) {
     }
 
-    /**
-     * @return ReadersContainer
-     */
     public function getReadersContainer(): ReadersContainer
     {
         return $this->readersContainer;
     }
 
-    /**
-     * @return RouterInterface
-     */
     public function getRouter(): RouterInterface
     {
         return $this->router;
@@ -102,4 +81,4 @@ class ReaderDefinitionType extends AbstractType
     {
         return 'dmytrof_import_task_reader_definition';
     }
-}
+}

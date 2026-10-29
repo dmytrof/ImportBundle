@@ -17,50 +17,22 @@ class ImportStatistics implements ArrayConvertibleModelInterface
 {
     use ArrayConvertibleModelTrait;
 
-    /**
-     * @var int
-     */
-    protected $all = 0;
+    protected int $all = 0;
 
-    /**
-     * @var int
-     */
-    protected $skipped = 0;
+    protected int $skipped = 0;
 
-    /**
-     * @var int
-     */
-    protected $scheduled = 0;
+    protected int $scheduled = 0;
 
-    /**
-     * @var int
-     */
-    protected $duplicates = 0;
+    protected int $duplicates = 0;
 
-    /**
-     * @var int
-     */
-    protected $created = 0;
+    protected int $created = 0;
 
-    /**
-     * @var int
-     */
-    protected $updated = 0;
+    protected int $updated = 0;
 
-    /**
-     * @var int
-     */
-    protected $deleted = 0;
+    protected int $deleted = 0;
 
-    /**
-     * @var int
-     */
-    protected $errors = 0;
+    protected int $errors = 0;
 
-    /**
-     * Resets all counters
-     * @return ImportStatistics
-     */
     public function reset(): self
     {
         $this->all = 0;
@@ -273,4 +245,4 @@ class ImportStatistics implements ArrayConvertibleModelInterface
         }
         return $this;
     }
-}
+}

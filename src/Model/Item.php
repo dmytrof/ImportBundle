@@ -47,69 +47,55 @@ class Item implements SimpleModelInterface, ActiveModelInterface, TargetedModelI
         self::STATUS_DATA_ERROR => 'label.import_item.statuses.data_error',
     ];
 
-    /**
-     * @var TaskManager
-     */
-    protected $taskManager;
+    protected ?TaskManager $taskManager = null;
 
     /**
      * ID
-     * @var string
      */
-    protected $id;
+    protected ?string $id = null;
 
     /**
      * Task id
-     * @var integer
      */
     #[Assert\NotBlank]
-    protected $taskId;
+    protected ?int $taskId = null;
 
     /**
      * Entry id
-     * @var string
      */
     #[Assert\NotBlank]
-    protected $entryId;
+    protected ?string $entryId = null;
 
     /**
      * Status
-     * @var int
      */
     #[Assert\NotBlank]
-    protected $statusId;
+    protected ?int $statusId = null;
 
     /**
      * Data hash
-     * @var string
      */
     #[Assert\NotBlank]
-    protected $dataHash;
+    protected ?string $dataHash = null;
 
     /**
      * Config hash
-     * @var string
      */
     #[Assert\NotBlank]
-    protected $configHash;
+    protected ?string $configHash = null;
 
     /**
      * Entry data
-     * @var array
      */
     #[Assert\Count(min: 1)]
-    protected $data;
+    protected ?array $data = null;
 
     /**
      * Errors
-     * @var string
      */
-    protected $errors;
+    protected ?string $errors = null;
 
-    /**
-     * @var bool
-     */
-    protected $forceImport = false;
+    protected bool $forceImport = false;
 
     /**
      * Returns array of statuses

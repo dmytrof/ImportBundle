@@ -16,15 +16,8 @@ use Dmytrof\ImportBundle\Exception\{ImportableFieldsOptionsException, InvalidArg
 
 class ImportableFieldsOptions extends ArrayCollection implements \SplObserver, \SplSubject
 {
-    /**
-     * @var \SplObjectStorage
-     */
-    protected $observers;
+    protected ?\SplObjectStorage $observers = null;
 
-    /**
-     * ImportableFieldsOptions constructor.
-     * @param array $elements
-     */
     public function __construct(array $elements = [])
     {
         parent::__construct([]);

@@ -19,18 +19,9 @@ use Dmytrof\ImportBundle\Form\DataTransformer\ValueToStringTransformer;
 
 class ImporterType extends AbstractType
 {
-    /**
-     * @var ImportersContainer
-     */
-    protected $importersContainer;
-
-    /**
-     * ImporterType constructor.
-     * @param ImportersContainer $importersContainer
-     */
-    public function __construct(ImportersContainer $importersContainer)
-    {
-        $this->importersContainer = $importersContainer;
+    public function __construct(
+        protected ImportersContainer $importersContainer,
+    ) {
     }
 
     /**
@@ -60,4 +51,4 @@ class ImporterType extends AbstractType
     {
         return ChoiceType::class;
     }
-}
+}

@@ -17,38 +17,33 @@ class CsvReaderOptions extends AbstractReaderOptions
 {
     /**
      * Has heading row
-     * @var bool
      */
     #[Assert\Type('bool')]
-    protected $hasHeadingRow = false;
+    protected bool $hasHeadingRow = false;
 
     /**
      * Skip empty rows
-     * @var bool
      */
     #[Assert\Type('bool')]
-    protected $skipEmptyRows = true;
+    protected bool $skipEmptyRows = true;
 
     /**
      * Delimiter
-     * @var string
      */
     #[Assert\NotNull]
-    protected $delimiter = ',';
+    protected ?string $delimiter = ',';
 
     /**
      * Enclosure
-     * @var string
      */
     #[Assert\NotNull]
-    protected $enclosure = '"';
+    protected ?string $enclosure = '"';
 
     /**
      * Escape
-     * @var string
      */
     #[Assert\NotNull]
-    protected $escape = '\\';
+    protected ?string $escape = '\\';
 
     /**
      * Returns hasHeadingRow
@@ -87,7 +82,7 @@ class CsvReaderOptions extends AbstractReaderOptions
      */
     public function setSkipEmptyRows(?bool $skipEmptyRows): self
     {
-        $this->skipEmptyRows = $skipEmptyRows;
+        $this->skipEmptyRows = (bool) $skipEmptyRows;
         $this->notify();
         return $this;
     }

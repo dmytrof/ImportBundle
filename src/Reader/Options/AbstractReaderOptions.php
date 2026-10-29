@@ -17,10 +17,7 @@ abstract class AbstractReaderOptions implements ReaderOptionsInterface
 {
     use ArrayConvertibleModelTrait;
 
-    /**
-     * @var \SplObjectStorage
-     */
-    protected $observers;
+    protected ?\SplObjectStorage $observers = null;
 
     /**
      * @return \SplObjectStorage

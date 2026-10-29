@@ -22,15 +22,11 @@ class ImportTasksCommand extends Command
 {
     use LockableTrait;
 
-    /**
-     * @var TaskManager
-     */
-    private $taskManager;
-
-    public function __construct(TaskManager $taskManager, ?string $name = null)
-    {
+    public function __construct(
+        private readonly TaskManager $taskManager,
+        ?string $name = null,
+    ) {
         parent::__construct($name);
-        $this->taskManager = $taskManager;
     }
 
 	protected function configure(): void

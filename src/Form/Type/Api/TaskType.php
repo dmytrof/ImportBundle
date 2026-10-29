@@ -19,23 +19,11 @@ use Dmytrof\ImportBundle\Manager\TaskManager as Manager;
 
 class TaskType extends AbstractType
 {
-    /**
-     * @var Manager
-     */
-    protected $manager;
-
-    /**
-     * TaskType constructor.
-     * @param Manager $manager
-     */
-    public function __construct(Manager $manager)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        protected Manager $manager,
+    ) {
     }
 
-    /**
-     * @return Manager
-     */
     public function getManager(): Manager
     {
         return $this->manager;
@@ -94,4 +82,4 @@ class TaskType extends AbstractType
             ])
 		;
 	}
-}
+}

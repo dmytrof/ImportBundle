@@ -17,28 +17,22 @@ class ImportableFieldOptions implements \SplSubject, ArrayConvertibleModelInterf
 {
     use ArrayConvertibleModelTrait;
 
-    /**
-     * @var \SplObjectStorage
-     */
-    protected $observers;
+    protected ?\SplObjectStorage $observers = null;
 
     /**
      * Key in entry
-     * @var string
      */
-    protected $key;
+    protected ?string $key = null;
 
     /**
      * Fallback key in entry
-     * @var string
      */
-    protected $fallbackKey;
+    protected ?string $fallbackKey = null;
 
     /**
      * Default value
-     * @var string
      */
-    protected $defaultValue;
+    protected ?string $defaultValue = null;
 
     /**
      * @return \SplObjectStorage

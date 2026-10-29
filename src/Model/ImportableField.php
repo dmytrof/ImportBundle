@@ -15,34 +15,24 @@ class ImportableField
 {
     /**
      * Name of property
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Label of property
-     * @var string
      */
-    protected $label;
+    protected ?string $label = null;
 
     /**
      * Position of property
-     * @var int
      */
-    protected $position = 100;
+    protected int $position = 100;
 
     /**
      * Field options
-     * @var ImportableFieldOptions
      */
-    protected $options;
+    protected ?ImportableFieldOptions $options = null;
 
-    /**
-     * ImportableField constructor.
-     * @param string $name
-     * @param null|string $label
-     * @param int|null $position
-     */
     public function __construct(string $name, ?string $label = null, ?int $position = null)
     {
         $this->setName($name);

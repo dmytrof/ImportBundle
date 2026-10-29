@@ -18,18 +18,9 @@ use Dmytrof\ImportBundle\Form\DataTransformer\EntityToPropertyValueTransformer;
 
 class EntityType extends AbstractType
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * EntityType constructor.
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
+    public function __construct(
+        protected ManagerRegistry $registry,
+    ) {
     }
 
     /**
@@ -84,4 +75,4 @@ class EntityType extends AbstractType
     {
         return TextType::class;
     }
-}
+}

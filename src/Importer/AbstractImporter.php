@@ -40,54 +40,27 @@ abstract class AbstractImporter implements ImporterInterface
     public const IMPORTER_FORM_CLASS = null;
     public const IMPORTER_FORM_OPTIONS = [];
     public const COMPOUND_FIELD_NAME_DELIMITER = '.';
-    public const BATCH_LENGTH                  = 10;
+    public const BATCH_LENGTH = 10;
 
     protected const FORCE_FETCH_MODEL_FROM_TARGET = true;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected ?TranslatorInterface $translator = null;
 
-    /**
-     * @var Task
-     */
-    protected $task;
+    protected ?Task $task = null;
 
-    /**
-     * @var AbstractManager
-     */
-    protected $manager;
+    protected ?AbstractManager $manager = null;
 
-    /**
-     * @var SymfonyStyle
-     */
-    protected $output;
+    protected ?SymfonyStyle $output = null;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    protected ?LoggerInterface $logger = null;
 
-    /**
-     * @var ItemManager
-     */
-    protected $itemManager;
+    protected ?ItemManager $itemManager = null;
 
-    /**
-     * @var ImportStatistics
-     */
-    protected $importStatistics;
+    protected ?ImportStatistics $importStatistics = null;
 
-    /**
-     * @var ImportableFields
-     */
-    protected $importableFieldsWithOptions;
+    protected ?ImportableFields $importableFieldsWithOptions = null;
 
-    /**
-     * @var array
-     */
-    protected $processedEntriesIds = [];
+    protected array $processedEntriesIds = [];
 
     /**
      * {@inheritdoc}

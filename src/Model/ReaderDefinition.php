@@ -15,32 +15,16 @@ use Dmytrof\ImportBundle\Reader\Options\ReaderOptionsInterface;
 
 class ReaderDefinition
 {
-    /**
-     * @var Task
-     */
-    private $task;
-
-    /**
-     * ReaderDefinition constructor.
-     * @param Task $task
-     */
-    public function __construct(Task $task)
-    {
-        $this->task = $task;
+    public function __construct(
+        private Task $task,
+    ) {
     }
 
-    /**
-     * @return Task
-     */
     public function getTask(): Task
     {
         return $this->task;
     }
 
-    /**
-     * Code
-     * @return null|string
-     */
     public function getCode(): ?string
     {
         return $this->getTask()->getReaderCode();
@@ -127,4 +111,4 @@ class ReaderDefinition
             $this->setOptions($value);
         }
     }
-}
+}

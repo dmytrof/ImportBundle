@@ -31,46 +31,46 @@ class Task extends Model
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    protected $id;
+    protected ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    protected $title;
+    protected ?string $title = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    protected $code;
+    protected ?string $code = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    protected $link;
+    protected ?string $link = null;
 
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
-    protected $paginatedLink;
+    protected bool $paginatedLink = false;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $pageParameterInLink;
+    protected ?string $pageParameterInLink = null;
 
     #[ORM\Column(type: 'smallint', nullable: true)]
-    protected $firstPageValue;
+    protected ?int $firstPageValue = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    protected $period;
+    protected ?int $period = null;
 
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
-    protected $inProgress;
+    protected bool $inProgress = false;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    protected $importedAt;
+    protected ?\DateTime $importedAt = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    protected $importerCode;
+    protected ?string $importerCode = null;
 
     #[ORM\Column(name: 'importer_options', type: 'json', nullable: true)]
-    protected $importerOptionsArr;
+    protected ?array $importerOptionsArr = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    protected $readerCode;
+    protected ?string $readerCode = null;
 
     #[ORM\Column(name: 'reader_options', type: 'json', nullable: true)]
-    protected $readerOptionsArr;
+    protected ?array $readerOptionsArr = null;
 
     // Typed as in ActiveModelTrait of ModelsManagementBundle
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => true])]

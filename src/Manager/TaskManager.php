@@ -33,20 +33,14 @@ class TaskManager extends AbstractDoctrineManager
     const EXCEPTION_CLASS_NOT_FOUND = NotFoundException::class;
     const FORM_TYPE_CREATE_ITEM = CreateType::class;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    protected Logger $logger;
 
-    /**
-     * TaskManager constructor.
-     * @param ManagerRegistry $registry
-     * @param ValidatorInterface $validator
-     * @param FormFactoryInterface $formFactory
-     * @param Logger $logger
-     */
-    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory, Logger $logger)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ValidatorInterface $validator,
+        FormFactoryInterface $formFactory,
+        Logger $logger,
+    ) {
         $this->logger = $logger;
         parent::__construct($registry, $validator, $formFactory);
     }
@@ -104,4 +98,4 @@ class TaskManager extends AbstractDoctrineManager
     {
         return $this->getRepository()->getScheduledImportTasks();
     }
-}
+}

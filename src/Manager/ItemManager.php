@@ -30,20 +30,14 @@ class ItemManager extends AbstractDoctrineManager
     const MODEL_CLASS = Entity::class;
     const EXCEPTION_CLASS_NOT_FOUND = NotFoundException::class;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    protected Logger $logger;
 
-    /**
-     * ItemManager constructor.
-     * @param ManagerRegistry $registry
-     * @param ValidatorInterface $validator
-     * @param FormFactoryInterface $formFactory
-     * @param Logger $logger
-     */
-    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory, Logger $logger)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ValidatorInterface $validator,
+        FormFactoryInterface $formFactory,
+        Logger $logger,
+    ) {
         $this->logger = $logger;
         parent::__construct($registry, $validator, $formFactory);
     }
@@ -121,4 +115,4 @@ class ItemManager extends AbstractDoctrineManager
     {
         return $this->getRepository()->getScheduledImportItems($batch, $taskId);
     }
-}
+}

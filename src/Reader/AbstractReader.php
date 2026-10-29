@@ -32,28 +32,13 @@ abstract class AbstractReader implements ReaderInterface
     public const OPTIONS_FORM_CLASS = null;
     public const DATA_IN_ROOT = false;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected ?Task $task = null;
 
-    /**
-     * @var Task
-     */
-    protected $task;
+    protected ?Client $client = null;
 
-    /**
-     * @var Client
-     */
-    protected $client;
-
-    /**
-     * AbstractReader constructor.
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
+    public function __construct(
+        protected TranslatorInterface $translator,
+    ) {
     }
 
     /**

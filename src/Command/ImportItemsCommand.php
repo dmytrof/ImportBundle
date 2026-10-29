@@ -22,15 +22,11 @@ class ImportItemsCommand extends Command
 {
     use LockableTrait;
 
-    /**
-     * @var ItemManager
-     */
-    private $itemManager;
-
-    public function __construct(ItemManager $itemManager, ?string $name = null)
-    {
+    public function __construct(
+        private readonly ItemManager $itemManager,
+        ?string $name = null,
+    ) {
         parent::__construct($name);
-        $this->itemManager = $itemManager;
     }
 
 	protected function configure(): void

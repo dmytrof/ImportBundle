@@ -17,10 +17,7 @@ use Dmytrof\ImportBundle\Reader\ReaderInterface;
 
 class ReadersContainer implements \IteratorAggregate
 {
-    /**
-     * @var Collection|ReaderInterface[]
-     */
-	protected $readers;
+	protected Collection $readers;
 
     /**
      * ReadersContainer constructor.

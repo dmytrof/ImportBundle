@@ -23,73 +23,29 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
     public const MULTIPLE_DATA_TYPE_ARRAY = 'array';
     public const MULTIPLE_DATA_TYPE_COLLECTION = 'collection';
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    protected string $entityIdProperty = 'id';
 
-    /**
-     * @var string
-     */
-    protected $entityClass;
+    protected bool $createEntityIfNotExists = false;
 
-    /**
-     * @var string
-     */
-    protected $entityProperty;
+    protected bool $multiple = false;
 
-    /**
-     * @var string
-     */
-    protected $entityIdProperty = 'id';
+    protected string $multipleDataType = self::MULTIPLE_DATA_TYPE_COLLECTION;
 
-    /**
-     * @var bool
-     */
-    protected $createEntityIfNotExists = false;
+    protected bool $allowNull = true;
 
-    /**
-     * @var bool
-     */
-    protected $multiple = false;
+    protected bool $nullOnException = false;
 
-    /**
-     * @var string
-     */
-    protected $multipleDataType = self::MULTIPLE_DATA_TYPE_COLLECTION;
+    protected ?\Closure $queryBuilderDecorator = null;
 
-    /**
-     * @var bool
-     */
-    protected $allowNull = true;
-
-    /**
-     * @var bool
-     */
-    protected $nullOnException = false;
-
-    /**
-     * @var \Closure
-     */
-    protected $queryBuilderDecorator;
-
-    /**
-     * EntityToPropertyValueTransformer constructor.
-     * @param ManagerRegistry $registry
-     * @param string $entityClass
-     * @param string $entityProperty
-     */
-    public function __construct(ManagerRegistry $registry, string $entityClass, string $entityProperty)
-    {
-        $this->registry = $registry;
-        $this->entityClass = $entityClass;
-        $this->entityProperty = $entityProperty;
+    public function __construct(
+        protected ManagerRegistry $registry,
+        protected string $entityClass,
+        protected string $entityProperty,
+    ) {
     }
 
     /**
      * Sets entity ID property
-     * @param string $entityIdProperty
-     * @return EntityToPropertyValueTransformer
      */
     public function setEntityIdProperty(string $entityIdProperty): self
     {
@@ -99,8 +55,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Sets create entity if not exists flag
-     * @param bool $createEntityIfNotExists
-     * @return EntityToPropertyValueTransformer
      */
     public function setCreateEntityIfNotExists(bool $createEntityIfNotExists = true): self
     {
@@ -110,8 +64,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Sets multiple
-     * @param bool $multiple
-     * @return EntityToPropertyValueTransformer
      */
     public function setMultiple(bool $multiple = true): self
     {
@@ -121,8 +73,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Sets multiple data type
-     * @param string $multipleDataType
-     * @return EntityToPropertyValueTransformer
      */
     public function setMultipleDataType(string $multipleDataType): self
     {
@@ -132,8 +82,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Sets allow null
-     * @param bool $allowNull
-     * @return EntityToPropertyValueTransformer
      */
     public function setAllowNull(bool $allowNull = true): self
     {
@@ -143,8 +91,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Sets null on exception
-     * @param bool $nullOnException
-     * @return EntityToPropertyValueTransformer
      */
     public function setNullOnException(bool $nullOnException = true): self
     {
@@ -154,8 +100,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Sets query builder decorator
-     * @param \Closure|null $queryBuilderDecorator
-     * @return $this
      */
     public function setQueryBuilderDecorator(?\Closure $queryBuilderDecorator): self
     {
@@ -165,7 +109,6 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Returns repository
-     * @return EntityRepository
      */
     protected function getRepository(): EntityRepository
     {
@@ -174,13 +117,12 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Converts value to string
-     * @param $value
      * @return null|string
      */
-    protected function stringifyValue($value): ?string
+    protected function stringifyValue(mixed $value): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
         if (is_array($value)) {
             if (sizeof ($value)) {
@@ -194,10 +136,8 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Converts entity to string
-     * @param $entity
-     * @return string|null
      */
-    protected function convertEntityToString($entity): ?string
+    protected function convertEntityToString(mixed $entity): ?string
     {
         if ($entity instanceof $this->entityClass) {
             return $entity->{'get'.(new Inflector(new NoopWordInflector(), new NoopWordInflector()))->classify($this->entityProperty)}();
@@ -207,10 +147,8 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
 
     /**
      * Converts string to entity
-     * @param $value
-     * @return array|mixed|null
      */
-    protected function convertStringToEntity($value)
+    protected function convertStringToEntity(mixed $value): ?object
     {
         $builder = $this->getRepository()->createQueryBuilder('a');
         $builder
@@ -252,7 +190,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
             $entity = is_iterable($entity) ? $entity : [$entity];
             $values = [];
             foreach ($entity as $_entity) {
-                array_push($values, $this->convertEntityToString($_entity));
+                $values[] = $this->convertEntityToString($_entity);
             }
             $values = array_filter($values, function ($v) { return !is_null($v);});
 
@@ -273,7 +211,7 @@ class EntityToPropertyValueTransformer implements DataTransformerInterface
             foreach ($value as $val) {
                 $val = $this->stringifyValue($val);
                 try {
-                    array_push($entities, $this->convertStringToEntity($val));
+                    $entities[] = $this->convertStringToEntity($val);
                 } catch (TransformationFailedException $e) {
                 }
                 $entities = array_filter($entities, function ($v) { return !is_null($v);});

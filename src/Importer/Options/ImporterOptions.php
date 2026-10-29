@@ -22,44 +22,29 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
     public const PATH_DELIMITER = '/';
     public const ID_FIELDS_DELIMITER = ',';
 
-    /**
-     * @var \SplObjectStorage
-     */
-    protected $observers;
+    protected ?\SplObjectStorage $observers = null;
 
     /**
      * Path to data entries (items)
-     * @var string
      */
-    protected $dataPath;
+    protected ?string $dataPath = null;
 
     /**
      * Entry (item) hash id fields
-     * @var array
      */
     #[Assert\Count(min: 1)]
-    protected $itemHashIdFields;
+    protected ?array $itemHashIdFields = null;
 
-    /**
-     * @var bool
-     */
-    protected $force;
+    protected bool $force = false;
 
-    /**
-     * @var bool
-     */
-    protected $syncData;
+    protected bool $syncData = false;
 
-    /**
-     * @var bool
-     */
-    protected $skipExisted;
+    protected bool $skipExisted = false;
 
     /**
      * Importable fields options
-     * @var ImportableFieldsOptions
      */
-    protected $importableFieldsOptions;
+    protected ?ImportableFieldsOptions $importableFieldsOptions = null;
 
     /**
      * @inheritDoc
@@ -74,7 +59,6 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
 
     /**
      * Returns path delimiter
-     * @return string
      */
     public static function getPathDelimiter(): string
     {
@@ -83,16 +67,12 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
 
     /**
      * Returns id fields delimiter
-     * @return string
      */
     public static function getIdFieldsDelimiter(): string
     {
         return static::ID_FIELDS_DELIMITER;
     }
 
-    /**
-     * @return \SplObjectStorage
-     */
     public function getObservers(): \SplObjectStorage
     {
         if (is_null($this->observers)) {
@@ -291,7 +271,7 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
      */
     public function setSkipExisted(?bool $skipExisted): self
     {
-        $this->skipExisted = $skipExisted;
+        $this->skipExisted = (bool) $skipExisted;
         $this->notify();
         return $this;
     }
@@ -334,4 +314,4 @@ class ImporterOptions implements ImporterOptionsInterface, \SplObserver
 
         return $this;
     }
-}
+}

@@ -22,36 +22,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ImportDoctrineSubscriber
 {
-    /**
-     * @var ImportersContainer
-     */
-    protected $importersContainer;
-
-    /**
-     * @var ReadersContainer
-     */
-    protected $readersContainer;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var TaskManager
-     */
-    protected $taskManager;
-
     public function __construct(
-        TaskManager $taskManager,
-        ImportersContainer $importersContainer,
-        ReadersContainer $readersContainer,
-        EventDispatcherInterface $eventDispatcher,
+        protected TaskManager $taskManager,
+        protected ImportersContainer $importersContainer,
+        protected ReadersContainer $readersContainer,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->taskManager = $taskManager;
-        $this->importersContainer = $importersContainer;
-        $this->readersContainer = $readersContainer;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function postLoad(LifecycleEventArgs $args): void

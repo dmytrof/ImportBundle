@@ -15,18 +15,9 @@ use Dmytrof\ImportBundle\Importer\Options\ImporterOptionsInterface;
 
 class ImporterDefinition
 {
-    /**
-     * @var Task
-     */
-    private $task;
-
-    /**
-     * ImporterDefinition constructor.
-     * @param Task $task
-     */
-    public function __construct(Task $task)
-    {
-        $this->task = $task;
+    public function __construct(
+        private Task $task,
+    ) {
     }
 
     /**
@@ -127,4 +118,4 @@ class ImporterDefinition
             $this->setOptions($value);
         }
     }
-}
+}

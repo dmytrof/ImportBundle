@@ -17,23 +17,11 @@ use Dmytrof\ImportBundle\{Importer\ImporterInterface, Model\ImporterDefinition, 
 
 class ImporterDefinitionType extends AbstractType
 {
-    /**
-     * @var ImportersContainer
-     */
-    protected $importersContainer;
-
-    /**
-     * ImporterDefinitionType constructor.
-     * @param ImportersContainer $importersContainer
-     */
-    public function __construct(ImportersContainer $importersContainer)
-    {
-        $this->importersContainer = $importersContainer;
+    public function __construct(
+        protected ImportersContainer $importersContainer,
+    ) {
     }
 
-    /**
-     * @return ImportersContainer
-     */
     public function getImportersContainer(): ImportersContainer
     {
         return $this->importersContainer;
@@ -77,4 +65,4 @@ class ImporterDefinitionType extends AbstractType
     {
         return 'dmytrof_import_task_importer_definition';
     }
-}
+}

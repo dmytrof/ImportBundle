@@ -16,23 +16,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractTaskEvent extends Event
 {
-    /**
-     * @var Task
-     */
-    protected $task;
-
-    /**
-     * AbstractTaskEvent constructor.
-     * @param Task $task
-     */
-    public function __construct(Task $task)
-    {
-        $this->task = $task;
+    public function __construct(
+        protected readonly Task $task,
+    ) {
     }
 
     /**
      * Returns task
-     * @return Task
      */
     public function getTask(): Task
     {
