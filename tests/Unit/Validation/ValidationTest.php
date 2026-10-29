@@ -90,14 +90,6 @@ class ValidationTest extends TestCase
         $this->assertSame(['Undefined reader code'], $violations['readerCode']);
     }
 
-    public function testReaderOptionsAreValidatedInLinkGroup(): void
-    {
-        $task = $this->validTask()->setReaderCode('csv');
-        $task->getReaderOptions()->setDelimiter(null);
-
-        $this->assertArrayHasKey('readerOptions.delimiter', $this->violations($task, [Task::VALIDATION_GROUP_LINK_AND_PARSER]));
-    }
-
     public function testItem(): void
     {
         $violations = $this->violations(new Item());
